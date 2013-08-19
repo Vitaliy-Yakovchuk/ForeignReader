@@ -1,10 +1,13 @@
 package com.foriegnreader;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import com.foriegnreader.pages.Page;
 import com.reader.common.AbstractTextProcessor;
+import com.reader.common.ColorConstants;
 import com.reader.common.ObjectsFactory;
 import com.reader.common.TextSource;
 import com.reader.common.TextWithProperties;
@@ -22,6 +25,10 @@ public class PageView extends View {
 
 	private TextPaint textPaint;
 	private List<Word> words = new ArrayList<PageView.Word>();
+	private TextSource ts;
+
+	final int blue = Color.parseColor("#AAAAFF");
+	final int red = Color.parseColor("#FF9999");
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -30,7 +37,7 @@ public class PageView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		for (Word word : words) {
-			textPaint.setColor(Color.YELLOW);
+			textPaint.setColor(word.color);
 			canvas.drawRect(word.rect, textPaint);
 			textPaint.setColor(Color.BLACK);
 			canvas.drawText(word.text, word.start, word.length2, word.x,
@@ -43,13 +50,13 @@ public class PageView extends View {
 		this.textPaint = textPaint;
 		words.clear();
 		final String text = page.getText();
-		TextSource ts = ObjectsFactory.createSimpleSource(text);
+		ts = ObjectsFactory.createSimpleSource(text);
 
 		Rect bounds = new Rect();
 
 		textPaint.getTextBounds(" ", 0, 1, bounds);
 
-		//final int spaceWidth = bounds.right;
+		// final int spaceWidth = bounds.right;
 
 		AbstractTextProcessor abstractTextProcessor = new AbstractTextProcessor() {
 
@@ -60,8 +67,6 @@ public class PageView extends View {
 			int cWidth;
 
 			List<Word> lineWords = new ArrayList<PageView.Word>();
-
-			// boolean hasParagraph;
 
 			@Override
 			public void got(TextWithProperties textProperties) {
@@ -109,9 +114,22 @@ public class PageView extends View {
 				cWidth += rect.right;
 				lineWords.add(word);
 				words.add(word);
+				word.lcWord = textProperties.getText().toLowerCase(
+						Locale.getDefault());
 
+				if (ColorConstants.WHITE.equals(textProperties.getColor())) {
+					word.color = Color.WHITE;
+				} else if (ColorConstants.BLUE
+						.equals(textProperties.getColor())) {
+					word.color = blue;
+				} else if (ColorConstants.YELLOW.equals(textProperties
+						.getColor())) {
+					word.color = Color.YELLOW;
+				} else if (ColorConstants.RED.equals(textProperties.getColor())) {
+					word.color = red;
+				}
 			}
-			
+
 			@Override
 			public void end() {
 				line++;
@@ -153,6 +171,17 @@ public class PageView extends View {
 
 	}
 
+	public void markAsReaded() {
+		HashSet<String> hs = new HashSet<String>();
+		for (Word word : words)
+			if (word.color == blue) {
+				word.color = Color.WHITE;
+				if (!hs.contains(word))
+					hs.add(word.lcWord);
+			}
+		ts.markColor(hs.toArray(new String[hs.size()]), ColorConstants.WHITE);
+	}
+
 	private class Word {
 		int start;
 
@@ -169,6 +198,10 @@ public class PageView extends View {
 		int y;
 
 		Rect rect;
+
+		int color;
+
+		String lcWord;
 	}
 
 }

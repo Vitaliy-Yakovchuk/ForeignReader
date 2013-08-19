@@ -39,6 +39,8 @@ public class ReaderActivity extends Activity {
 
 	private int lineWidth;
 
+	private Button mark;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,6 +52,7 @@ public class ReaderActivity extends Activity {
 
 		prev = (Button) findViewById(R.id.prevPage);
 		next = (Button) findViewById(R.id.nextPage);
+		mark = (Button) findViewById(R.id.markAllAsKnown);
 
 		findViewById(R.id.loadButton).setOnClickListener(
 				new View.OnClickListener() {
@@ -76,9 +79,22 @@ public class ReaderActivity extends Activity {
 			}
 		});
 
+		mark.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				markAllAsReaded();
+			}
+		});
+
 		pageNumber = (TextView) findViewById(R.id.pageNumber);
 
 		loadText();
+	}
+
+	protected void markAllAsReaded() {
+		contentView.markAsReaded();
+		contentView.invalidate();
 	}
 
 	protected void prev() {
@@ -136,23 +152,23 @@ public class ReaderActivity extends Activity {
 	}
 
 	private void loadFile() {
-		 int screenWidth = contentView.getWidth();
-		 int screenHeight = contentView.getHeight();
+		int screenWidth = contentView.getWidth();
+		int screenHeight = contentView.getHeight();
 
-		//DisplayMetrics dm = new DisplayMetrics();
-		//getWindowManager().getDefaultDisplay().getMetrics(dm);
-		//int screenWidth = dm.widthPixels;
-		//int screenHeight = dm.heightPixels;
+		// DisplayMetrics dm = new DisplayMetrics();
+		// getWindowManager().getDefaultDisplay().getMetrics(dm);
+		// int screenWidth = dm.widthPixels;
+		// int screenHeight = dm.heightPixels;
 
 		paint = new TextPaint();
-		
+
 		paint.setTextSize(FONT_SIZE);
 
 		lineHeight = dipToPixels(FONT_SIZE);
 		int maxLineCount = screenHeight / lineHeight;
 
 		lineWidth = screenWidth;
-		
+
 		section.splitOnPages(paint, screenWidth, maxLineCount);
 
 		next.setEnabled(section.getPageCount() > 1);
