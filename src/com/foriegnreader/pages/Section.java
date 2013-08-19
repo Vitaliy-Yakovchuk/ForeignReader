@@ -22,18 +22,18 @@ public class Section {
 		char[] chr = text.toCharArray();
 		int numChars = 0;
 		do {
-			Page page = new Page();
+			Page page = new Page(chr, maxLineCount);
 			pages.add(page);
-			page.start = numChars;
 			int lineCount = 0;
 			while ((lineCount < maxLineCount) && (numChars < text.length())) {
-				numChars = numChars
-						+ paint.breakText(chr, numChars, ((numChars + 500 > text
-								.length()) ? text.length()-numChars : 500),
-								width, null);
+				page.startLines[lineCount] = numChars;
+				int count = paint.breakText(chr, numChars,
+						((numChars + 500 > text.length()) ? text.length()
+								- numChars : 500), width, null);
+				numChars = numChars + count;
+				page.lengthLines[lineCount] = count;
 				lineCount++;
 			}
-			page.length = numChars - page.start;
 		} while (numChars < text.length());
 	}
 
@@ -41,9 +41,8 @@ public class Section {
 		return pages.size();
 	}
 
-	public String getPage() {
-		return text.substring(pages.get(currentPage).start,
-				pages.get(currentPage).start + pages.get(currentPage).length);
+	public Page getPage() {
+		return pages.get(currentPage);
 	}
 
 	public int getCurrentPage() {

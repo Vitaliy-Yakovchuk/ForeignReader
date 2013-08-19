@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -51,6 +52,7 @@ public class BooksActivity extends Activity {
 		});
 
 		books.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@SuppressWarnings("rawtypes")
 			@Override
 			public void onItemClick(AdapterView parentView, View childView,
 					int position, long id) {
@@ -81,7 +83,8 @@ public class BooksActivity extends Activity {
 
 	void pickFile(File aFile) {
 		Intent intent = new Intent(getBaseContext(), FileDialog.class);
-		intent.putExtra(FileDialog.START_PATH, "/sdcard");
+		intent.putExtra(FileDialog.START_PATH, Environment
+				.getExternalStorageDirectory().getAbsolutePath());
 
 		// can user select directories or not
 		intent.putExtra(FileDialog.CAN_SELECT_DIR, false);

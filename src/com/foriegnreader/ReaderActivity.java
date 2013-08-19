@@ -5,33 +5,27 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-import com.example.foriegnreader.R;
-import com.foriegnreader.pages.Section;
-import com.reader.common.AbstractTextProcessor;
-import com.reader.common.ColorConstants;
-import com.reader.common.ObjectsFactory;
-import com.reader.common.TextSource;
-import com.reader.common.TextWithProperties;
-
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
-import android.util.DisplayMetrics;
+import android.text.TextPaint;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.foriegnreader.R;
+import com.foriegnreader.pages.Section;
+
 public class ReaderActivity extends Activity {
+
+	private static final int FONT_SIZE = 26;
 
 	public static final String FILE = "FileName";
 
 	private Section section;
 
-	private TextView contentView;
+	private PageView contentView;
 
 	private Button prev;
 
@@ -39,13 +33,20 @@ public class ReaderActivity extends Activity {
 
 	private TextView pageNumber;
 
+	private TextPaint paint;
+
+	private int lineHeight;
+
+	private int lineWidth;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_reader);
 
-		contentView = (TextView) findViewById(R.id.fullscreen_content);
+		View findViewById = findViewById(R.id.fullscreen_content);
+		contentView = (PageView) findViewById;
 
 		prev = (Button) findViewById(R.id.prevPage);
 		next = (Button) findViewById(R.id.nextPage);
@@ -105,31 +106,8 @@ public class ReaderActivity extends Activity {
 	}
 
 	private void loadPage() {
-		final String page = section.getPage();
-		final SpannableString text = new SpannableString(page);
-
-		TextSource ts = ObjectsFactory.createSimpleSource(page);
-
-		ts.process(new AbstractTextProcessor() {
-
-			int num = 0;
-
-			@Override
-			public void got(TextWithProperties textProperties) {
-				while (page.charAt(num) != textProperties.getText().charAt(0))
-					num++;
-				int length = textProperties.getText().length();
-				/*if (ColorConstants.YELLOW.equals(textProperties.getColor()))
-					text.setSpan(new BackgroundColorSpan(Color.YELLOW), num,
-							num + length, 0);
-				else if (ColorConstants.BLUE.equals(textProperties.getColor()))
-					text.setSpan(new BackgroundColorSpan(Color.BLUE), num, num
-							+ length, 0);*/
-				num += length;
-			}
-		});
-
-		contentView.setText(text);
+		contentView.setText(section.getPage(), paint, lineHeight, lineWidth);
+		contentView.invalidate();
 	}
 
 	private void loadText() {
@@ -158,20 +136,23 @@ public class ReaderActivity extends Activity {
 	}
 
 	private void loadFile() {
-		// int screenWidth = contentView.getWidth();
-		// int screenHeight = contentView.getHeight();
+		 int screenWidth = contentView.getWidth();
+		 int screenHeight = contentView.getHeight();
 
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		int screenWidth = dm.widthPixels;
-		int screenHeight = dm.heightPixels;
+		//DisplayMetrics dm = new DisplayMetrics();
+		//getWindowManager().getDefaultDisplay().getMetrics(dm);
+		//int screenWidth = dm.widthPixels;
+		//int screenHeight = dm.heightPixels;
 
-		Paint paint = new Paint();
-		paint.setTextSize(contentView.getTextSize());
+		paint = new TextPaint();
+		
+		paint.setTextSize(FONT_SIZE);
 
-		int maxLineCount = screenHeight / contentView.getLineHeight();
-		contentView.setLines(maxLineCount);
+		lineHeight = dipToPixels(FONT_SIZE);
+		int maxLineCount = screenHeight / lineHeight;
 
+		lineWidth = screenWidth;
+		
 		section.splitOnPages(paint, screenWidth, maxLineCount);
 
 		next.setEnabled(section.getPageCount() > 1);
@@ -179,6 +160,13 @@ public class ReaderActivity extends Activity {
 
 		if (section.getPageCount() > 0)
 			loadPage();
+	}
+
+	private int dipToPixels(int dipValue) {
+		Resources r = getResources();
+		int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				dipValue, r.getDisplayMetrics());
+		return px;
 	}
 
 }
