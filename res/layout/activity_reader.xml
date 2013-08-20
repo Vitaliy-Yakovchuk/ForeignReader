@@ -5,93 +5,73 @@
     android:background="#ffffff"
     tools:context=".ReaderActivity" >
 
-    <Button
-        android:id="@+id/prevPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:enabled="false"
-        android:text="&lt;&lt;&lt;" />
-
-    <Button
-        android:id="@+id/nextPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:enabled="false"
-        android:text=">>>" />
-
     <com.foriegnreader.PageView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/prevPage"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
-    <Button
-        android:id="@+id/loadButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/markAllAsKnown"
-        android:text="Load" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true" >
 
-    <Button
-        android:id="@+id/markAllAsKnown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/nextPage"
-        android:text="Mark" />
+        <RelativeLayout
+            android:id="@+id/fullscreen_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fullscreen_content" >
 
-    <EditText
-        android:id="@+id/selectedText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/prevPage"
-        android:layout_alignBottom="@+id/prevPage"
-        android:layout_toLeftOf="@+id/pageNumber"
-        android:layout_toRightOf="@+id/prevPage"
-        android:ems="10" >
+            <Button
+                android:id="@+id/blueButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/markAllAsKnown"
+                android:text="B"
+                android:textColor="#000000" />
 
-        <requestFocus />
-    </EditText>
+            <Button
+                android:id="@+id/whiteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/blueButton"
+                android:text="W"
+                android:textColor="#000000" />
 
-    <Button
-        android:id="@+id/blueButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/loadButton"
-        android:text="B" />
+            <Button
+                android:id="@+id/yellowButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/whiteButton"
+                android:text="Y"
+                android:textColor="#000000" />
 
-    <Button
-        android:id="@+id/whiteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/blueButton"
-        android:text="W" />
+            <Button
+                android:id="@+id/markAllAsKnown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="Mark"
+                android:textColor="#000000" />
 
-    <Button
-        android:id="@+id/yellowButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/whiteButton"
-        android:text="Y" />
+            <EditText
+                android:id="@+id/selectedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/yellowButton"
+                android:layout_toLeftOf="@+id/yellowButton"
+                android:ems="10"
+                android:textColor="#000000" >
 
-    <TextView
-        android:id="@+id/pageNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/selectedText"
-        android:layout_alignBottom="@+id/selectedText"
-        android:layout_marginRight="38dp"
-        android:layout_toLeftOf="@+id/yellowButton"
-        android:text="Page 0 of 0"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+                <requestFocus />
+            </EditText>
+        </RelativeLayout>
+    </FrameLayout>
 
 </RelativeLayout>

@@ -26,7 +26,7 @@ import android.view.View;
 public class PageView extends View {
 
 	private TextPaint textPaint;
-	private List<Word> words = new ArrayList<PageView.Word>();
+	private List<Word> words;
 	private TextSource ts;
 
 	final int blue = Color.parseColor("#CCCCFF");
@@ -37,12 +37,19 @@ public class PageView extends View {
 	private int endSelection = -1;
 	private boolean splitPages;
 
-	private int gr0 = Color.parseColor("#0A0A0A");
+	private int gr0 = Color.parseColor("#0F0F0F");
 	private int[] gr = new int[6];
+
+	private Runnable loadPage;
+	private int pageCount;
+	private int currentPage;
+	private TextWidthImpl textWidth;
+	private int maxLineCount;
+	private int lineHeight;
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		gr[0] = Color.parseColor("#0F0F0F");
+		gr[0] = Color.parseColor("#A4A4A4");
 		gr[1] = Color.parseColor("#AAAAAA");
 		gr[2] = Color.parseColor("#BABABA");
 		gr[3] = Color.parseColor("#CCCCCC");
@@ -52,6 +59,11 @@ public class PageView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		if (words == null) {
+			if (loadPage != null)
+				loadPage.run();
+			return;
+		}
 
 		if (splitPages) {
 			int c = getWidth() / 2;
@@ -75,14 +87,47 @@ public class PageView extends View {
 			canvas.drawText(word.text, word.start, word.length2, word.x,
 					word.y, textPaint);
 		}
+
+		if (splitPages) {
+			int dy = (maxLineCount / 2 + 1) * lineHeight;
+			String pc = (currentPage * 2 - 1) + "/" + (pageCount * 2);
+			char[] text = pc.toCharArray();
+			int w = textWidth.getWidth(text, 0, pc.length());
+			textPaint.setColor(Color.GRAY);
+			canvas.drawText(text, 0, pc.length(), getWidth() / 4 - w / 2, dy,
+					textPaint);
+			pc = (currentPage * 2) + "/" + (pageCount * 2);
+			text = pc.toCharArray();
+			w = textWidth.getWidth(text, 0, pc.length());
+			textPaint.setColor(Color.GRAY);
+			canvas.drawText(text, 0, pc.length(), getWidth() / 2 + getWidth()
+					/ 4 - w / 2, dy, textPaint);
+		} else {
+			int dy = (maxLineCount + 1) * lineHeight;
+			String pc = currentPage + "/" + pageCount;
+			char[] text = pc.toCharArray();
+			int w = textWidth.getWidth(text, 0, pc.length());
+			textPaint.setColor(Color.GRAY);
+			canvas.drawText(text, 0, pc.length(), getWidth() / 2 - w / 2, dy,
+					textPaint);
+		}
 	}
 
 	public void setText(final Page page, final TextWidthImpl textWidth,
-			final int lineHeight, final int lineWidth, final boolean splitPages) {
+			final int lineHeight, final int lineWidth,
+			final boolean splitPages, int page2, int pageCount) {
+		this.textWidth = textWidth;
+		this.currentPage = page2;
+		this.pageCount = pageCount;
 		this.splitPages = splitPages;
+		this.maxLineCount = page.getMaxLineCount();
+		this.lineHeight = lineHeight;
 		clearSelection();
 		this.textPaint = textWidth.getTextPaint();
-		words.clear();
+		if (words == null)
+			words = new ArrayList<PageView.Word>();
+		else
+			words.clear();
 		final String text = page.getText();
 		ts = ObjectsFactory.createSimpleSource(text);
 
@@ -166,8 +211,8 @@ public class PageView extends View {
 					}
 				}
 
-				word.rect.bottom = 0;
-				word.rect.top = (int) (-lineHeight * 0.8);
+				word.rect.bottom = (int) (lineHeight * 0.2);
+				word.rect.top = (int) (-lineHeight * 0.6);
 
 				word.width2 = textWidth.getWidth(word.text, word.start,
 						word.length2);
@@ -222,7 +267,7 @@ public class PageView extends View {
 
 				for (Word word : lineWords) {
 					word.x = dx;
-					word.y = dy - (int) (lineHeight * 0.2);
+					word.y = dy;
 					word.rect.offset(dx, dy);
 
 					dx += word.width2;
@@ -357,6 +402,14 @@ public class PageView extends View {
 		}
 
 		return sb.toString();
+	}
+
+	public Runnable getLoadPage() {
+		return loadPage;
+	}
+
+	public void setLoadPage(Runnable loadPage) {
+		this.loadPage = loadPage;
 	}
 
 }

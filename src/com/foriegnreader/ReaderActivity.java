@@ -2,9 +2,11 @@ package com.foriegnreader;
 
 import java.io.File;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextPaint;
@@ -16,11 +18,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.foriegnreader.R;
 import com.foriegnreader.pages.Section;
 import com.foriegnreader.textimpl.TextWidthImpl;
+import com.foriegnreader.util.SystemUiHider;
 import com.reader.common.ColorConstants;
 import com.reader.common.fb2.FictionBook;
 
@@ -34,11 +36,9 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	private PageView contentView;
 
-	private Button prev;
+	private boolean prev;
 
-	private Button next;
-
-	private TextView pageNumber;
+	private boolean next;
 
 	private TextPaint paint;
 
@@ -62,6 +62,16 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	public static boolean splitPages = true;
 
+	/**
+	 * The flags to pass to {@link SystemUiHider#getInstance}.
+	 */
+	private static final int HIDER_FLAGS = 0;// SystemUiHider.FLAG_HIDE_NAVIGATION;
+
+	/**
+	 * The instance of the {@link SystemUiHider} for this activity.
+	 */
+	private SystemUiHider mSystemUiHider;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,15 +80,21 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 		setContentView(R.layout.activity_reader);
 
-		View findViewById = findViewById(R.id.fullscreen_content);
-		contentView = (PageView) findViewById;
+		contentView = (PageView) findViewById(R.id.fullscreen_content);
+		final View controlsView = findViewById(R.id.fullscreen_controls);
 
-		prev = (Button) findViewById(R.id.prevPage);
-		next = (Button) findViewById(R.id.nextPage);
 		mark = (Button) findViewById(R.id.markAllAsKnown);
 		yellow = (Button) findViewById(R.id.yellowButton);
 		blue = (Button) findViewById(R.id.blueButton);
 		white = (Button) findViewById(R.id.whiteButton);
+
+		contentView.setLoadPage(new Runnable() {
+
+			@Override
+			public void run() {
+				loadFile();
+			}
+		});
 
 		selectedText = (EditText) findViewById(R.id.selectedText);
 
@@ -87,31 +103,6 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 			white.setEnabled(false);
 			blue.setEnabled(false);
 		}
-
-		findViewById(R.id.loadButton).setOnClickListener(
-				new View.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						loadFile();
-					}
-				});
-
-		prev.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				prev();
-			}
-		});
-
-		next.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				next();
-			}
-		});
 
 		mark.setOnClickListener(new View.OnClickListener() {
 
@@ -163,9 +154,49 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 			}
 		});
 
-		pageNumber = (TextView) findViewById(R.id.pageNumber);
-
 		loadText();
+
+		// ---FULL SCREEN
+
+		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
+				HIDER_FLAGS);
+		mSystemUiHider.setup();
+		mSystemUiHider
+				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
+					// Cached values.
+					int mControlsHeight;
+					int mShortAnimTime;
+
+					@Override
+					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+					public void onVisibilityChange(boolean visible) {
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+							// If the ViewPropertyAnimator API is available
+							// (Honeycomb MR2 and later), use it to animate the
+							// in-layout UI controls at the bottom of the
+							// screen.
+							if (mControlsHeight == 0) {
+								mControlsHeight = controlsView.getHeight();
+							}
+							if (mShortAnimTime == 0) {
+								mShortAnimTime = getResources().getInteger(
+										android.R.integer.config_shortAnimTime);
+							}
+							controlsView
+									.animate()
+									.translationY(visible ? 0 : mControlsHeight)
+									.setDuration(mShortAnimTime);
+						} else {
+							// If the ViewPropertyAnimator APIs aren't
+							// available, simply show or hide the in-layout UI
+							// controls.
+							controlsView.setVisibility(visible ? View.VISIBLE
+									: View.GONE);
+						}
+
+					}
+				});
+
 	}
 
 	protected void markColor(String color) {
@@ -178,6 +209,8 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		selectedText.setText(text);
 		updateTextMarkButtons(text.length() > 0);
 		contentView.invalidate();
+		if (!mSystemUiHider.isVisible())
+			showControls();
 	}
 
 	private void updateTextMarkButtons(boolean contain) {
@@ -204,31 +237,38 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	protected void prev() {
 		int p = section.getCurrentPage() - 1;
 		section.setCurrentPage(p);
-		loadPage();
+		loadPage(p + 1);
 		if (p == 0)
-			prev.setEnabled(false);
+			prev = false;
 		if (p + 2 == section.getPageCount())
-			next.setEnabled(true);
+			next = true;
 
-		pageNumber.setText("Page " + (p + 1) + " of " + section.getPageCount());
 	}
 
 	protected void next() {
 		int p = section.getCurrentPage() + 1;
 		section.setCurrentPage(p);
-		loadPage();
+		loadPage(p + 1);
 		if (p > 0)
-			prev.setEnabled(true);
+			prev = true;
 		if (p + 1 == section.getPageCount())
-			next.setEnabled(false);
-
-		pageNumber.setText("Page " + (p + 1) + " of " + section.getPageCount());
+			next = false;
 	}
 
-	private void loadPage() {
-		contentView.setText(section.getPage(), (TextWidthImpl) textWidth,
-				lineHeight, lineWidth, splitPages);
+	private void loadPage(int page) {
+		contentView
+				.setText(section.getPage(), (TextWidthImpl) textWidth,
+						lineHeight, lineWidth, splitPages, page,
+						section.getPageCount());
 		contentView.invalidate();
+		if (mSystemUiHider.isVisible()) {
+			hideControls();
+		}
+	}
+
+	private void hideControls() {
+		mSystemUiHider.hide();
+		getActionBar().hide();
 	}
 
 	private void loadText() {
@@ -262,7 +302,8 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		paint.setAntiAlias(true);
 
 		lineHeight = dipToPixels(FONT_SIZE) + 3;
-		int maxLineCount = screenHeight / lineHeight;
+		int maxLineCount = screenHeight / lineHeight - 1;// last row is system
+															// bar
 
 		lineWidth = screenWidth;
 
@@ -271,16 +312,14 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		if (splitPages) {
 			maxLineCount *= 2;
 			screenWidth = (int) (screenWidth * 0.46);
-		}else
+		} else
 			screenWidth = (int) (screenWidth * 0.96);
 
 		section.splitOnPages(textWidth, screenWidth, maxLineCount);
 
-		next.setEnabled(section.getPageCount() > 1);
-		pageNumber.setText("Page 1 of " + section.getPageCount());
-
+		next = section.getPageCount() > 1;
 		if (section.getPageCount() > 0)
-			loadPage();
+			loadPage(1);
 	}
 
 	private int dipToPixels(int dipValue) {
@@ -344,12 +383,25 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		String text = contentView.select(toContentViewX(e.getX()),
-				toContentViewY(e.getY()), toContentViewX(e.getX()),
-				toContentViewY(e.getY()));
-		if (text != null)
-			selectText(text);
+		if (e.getX() < contentView.getWidth() / 3) {
+			if (prev)
+				prev();
+		} else if (e.getX() > contentView.getWidth() / 3 * 2) {
+			if (next)
+				next();
+		} else {
+			if (mSystemUiHider.isVisible()) {
+				hideControls();
+			} else {
+				showControls();
+			}
+		}
 		return true;
+	}
+
+	private void showControls() {
+		mSystemUiHider.show();
+		getActionBar().show();
 	}
 
 }
