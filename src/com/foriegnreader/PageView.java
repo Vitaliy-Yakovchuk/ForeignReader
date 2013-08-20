@@ -313,7 +313,7 @@ public class PageView extends View {
 				sb = new StringBuffer();
 			else
 				sb.append(' ');
-			sb.append(new String(word.text, word.start, word.length1));
+			sb.append(new String(word.text, word.start, word.length2));
 		}
 
 		return sb.toString();
