@@ -22,15 +22,6 @@
         android:enabled="false"
         android:text=">>>" />
 
-    <TextView
-        android:id="@+id/pageNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Page 0 of 0"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
     <com.foriegnreader.PageView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
@@ -44,8 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="48dp"
-        android:layout_toRightOf="@+id/prevPage"
+        android:layout_toLeftOf="@+id/markAllAsKnown"
         android:text="Load" />
 
     <Button
@@ -53,8 +43,55 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="20dp"
         android:layout_toLeftOf="@+id/nextPage"
         android:text="Mark" />
+
+    <EditText
+        android:id="@+id/selectedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/prevPage"
+        android:layout_alignBottom="@+id/prevPage"
+        android:layout_toLeftOf="@+id/pageNumber"
+        android:layout_toRightOf="@+id/prevPage"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/blueButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/loadButton"
+        android:text="B" />
+
+    <Button
+        android:id="@+id/whiteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/blueButton"
+        android:text="W" />
+
+    <Button
+        android:id="@+id/yellowButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/whiteButton"
+        android:text="Y" />
+
+    <TextView
+        android:id="@+id/pageNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/selectedText"
+        android:layout_alignBottom="@+id/selectedText"
+        android:layout_marginRight="38dp"
+        android:layout_toLeftOf="@+id/yellowButton"
+        android:text="Page 0 of 0"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

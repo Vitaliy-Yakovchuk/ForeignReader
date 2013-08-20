@@ -1,6 +1,7 @@
 package com.foriegnreader;
 
 import java.util.ArrayList;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -27,8 +28,12 @@ public class PageView extends View {
 	private List<Word> words = new ArrayList<PageView.Word>();
 	private TextSource ts;
 
-	final int blue = Color.parseColor("#AAAAFF");
+	final int blue = Color.parseColor("#CCCCFF");
+	final int selected = Color.parseColor("#AAAAFF");
 	final int red = Color.parseColor("#FF9999");
+	final int yellow = Color.YELLOW;
+	private int startSelection = -1;
+	private int endSelection = -1;
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -36,8 +41,12 @@ public class PageView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		for (Word word : words) {
-			textPaint.setColor(word.color);
+		for (int i = words.size() - 1; i >= 0; --i) {
+			Word word = words.get(i);
+			if (i >= startSelection && i <= endSelection) {
+				textPaint.setColor(selected);
+			} else
+				textPaint.setColor(word.color);
 			canvas.drawRect(word.rect, textPaint);
 			textPaint.setColor(Color.BLACK);
 			canvas.drawText(word.text, word.start, word.length2, word.x,
@@ -56,7 +65,7 @@ public class PageView extends View {
 
 		textPaint.getTextBounds(" ", 0, 1, bounds);
 
-		// final int spaceWidth = bounds.right;
+		final int spaceWidth = bounds.right;
 
 		AbstractTextProcessor abstractTextProcessor = new AbstractTextProcessor() {
 
@@ -92,6 +101,8 @@ public class PageView extends View {
 
 				while (z + 1 < text.length()
 						&& !SimpleTextParser.isTextPart(text.charAt(z + 1))) {
+					if (Character.isWhitespace(text.charAt(z + 1)))
+						break;
 					z++;
 					length++;
 					// if (text.charAt(z + 1) == '\n')
@@ -117,17 +128,7 @@ public class PageView extends View {
 				word.lcWord = textProperties.getText().toLowerCase(
 						Locale.getDefault());
 
-				if (ColorConstants.WHITE.equals(textProperties.getColor())) {
-					word.color = Color.WHITE;
-				} else if (ColorConstants.BLUE
-						.equals(textProperties.getColor())) {
-					word.color = blue;
-				} else if (ColorConstants.YELLOW.equals(textProperties
-						.getColor())) {
-					word.color = Color.YELLOW;
-				} else if (ColorConstants.RED.equals(textProperties.getColor())) {
-					word.color = red;
-				}
+				word.color = toNativeColor(textProperties.getColor());
 			}
 
 			@Override
@@ -146,7 +147,10 @@ public class PageView extends View {
 				int sw; // = spaceWidth;
 
 				// if (!hasParagraph) {
-				sw = (lineWidth - cWidth) / (lineWords.size() - 1);
+				if (lineWords.size() > 1)
+					sw = (lineWidth - cWidth) / (lineWords.size() - 1);
+				else
+					sw = spaceWidth;
 				// }
 
 				int dx = 0;
@@ -165,10 +169,54 @@ public class PageView extends View {
 				cWidth = 0;
 				lineWords.clear();
 			}
+
+			@Override
+			public void updated(TextWithProperties textProperties) {
+				int i = 0;
+				List<String> words2 = textProperties.getWords();
+				while (i < words.size()) {
+					if (words.get(i).lcWord.equals(words2.get(0))) {
+						boolean found = true;
+						int j = i + 1;
+						int k = 1;
+						while (j < words.size() && k < words2.size()) {
+							if (!words.get(j).lcWord.equals(words2.get(k))) {
+								found = false;
+								break;
+							}
+							j++;
+							k++;
+						}
+						if (found && k == words2.size()) {
+							do {
+								words.get(i).color = toNativeColor(textProperties
+										.getColor());
+								i++;
+							} while (i < j);
+							i++;
+						}
+					}
+					i++;
+				}
+
+			}
 		};
 
 		ts.process(abstractTextProcessor);
 
+	}
+
+	public int toNativeColor(String c) {
+		if (ColorConstants.WHITE.equals(c)) {
+			return Color.WHITE;
+		} else if (ColorConstants.BLUE.equals(c)) {
+			return blue;
+		} else if (ColorConstants.YELLOW.equals(c)) {
+			return yellow;
+		} else if (ColorConstants.RED.equals(c)) {
+			return red;
+		}
+		return Color.WHITE;
 	}
 
 	public void markAsReaded() {
@@ -202,6 +250,48 @@ public class PageView extends View {
 		int color;
 
 		String lcWord;
+	}
+
+	public void setColor(String text, String color) {
+		ts.markColor(text, color);
+	}
+
+	public void clearSelection() {
+		startSelection = -1;
+		endSelection = -1;
+	}
+
+	public String select(int x1, int y1, int x2, int y2) {
+		startSelection = -1;
+		endSelection = -1;
+		for (int i = words.size() - 1; i >= 0; i--) {
+			if (words.get(i).rect.contains(x1, y1))
+				startSelection = i;
+			if (words.get(i).rect.contains(x2, y2))
+				endSelection = i;
+		}
+
+		if (startSelection < 0 || endSelection < 0)
+			return null;
+
+		if (endSelection < startSelection) {
+			int t = endSelection;
+			endSelection = startSelection;
+			startSelection = t;
+		}
+
+		StringBuffer sb = null;
+
+		for (int i = startSelection; i <= endSelection; i++) {
+			Word word = words.get(i);
+			if (sb == null)
+				sb = new StringBuffer();
+			else
+				sb.append(' ');
+			sb.append(new String(word.text, word.start, word.length2));
+		}
+
+		return sb.toString();
 	}
 
 }
