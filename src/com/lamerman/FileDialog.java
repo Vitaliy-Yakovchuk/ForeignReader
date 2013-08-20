@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.example.foriegnreader.R;
+import com.foriegnreader.R;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;

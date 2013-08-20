@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.example.foriegnreader.R;
+import com.foriegnreader.R;
 import com.lamerman.FileDialog;
 import com.lamerman.SelectionMode;
 import com.reader.common.ObjectsFactory;

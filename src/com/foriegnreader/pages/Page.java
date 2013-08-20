@@ -6,6 +6,7 @@ public class Page {
 		this.text = text;
 		startLines = new int[maxLineCount];
 		lengthLines = new int[maxLineCount];
+		end = new boolean[maxLineCount];
 	}
 
 	public final char[] text;
@@ -14,11 +15,15 @@ public class Page {
 
 	public final int[] lengthLines;
 
+	public final boolean[] end;
+
 	public String getText() {
 		int s = startLines[0];
 		int l = 0;
 		for (int i = 0; i < lengthLines.length; i++) {
-			l += lengthLines[i];
+			int j = startLines[i] + lengthLines[i] - s;
+			if (l < j)
+				l = j;
 		}
 		return new String(text, s, l);
 	}

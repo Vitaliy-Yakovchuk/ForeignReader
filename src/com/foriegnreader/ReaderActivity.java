@@ -1,9 +1,6 @@
 package com.foriegnreader;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.File;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -21,9 +18,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.foriegnreader.R;
+import com.foriegnreader.R;
 import com.foriegnreader.pages.Section;
+import com.foriegnreader.textimpl.TextWidthImpl;
 import com.reader.common.ColorConstants;
+import com.reader.common.fb2.FictionBook;
 
 public class ReaderActivity extends Activity implements OnGestureListener {
 
@@ -58,6 +57,8 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	private EditText selectedText;
 
 	private GestureDetector gestureScanner;
+
+	private TextWidthImpl textWidth;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -223,31 +224,25 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	}
 
 	private void loadPage() {
-		contentView.setText(section.getPage(), paint, lineHeight, lineWidth);
+		contentView.setText(section.getPage(), (TextWidthImpl) textWidth,
+				lineHeight, lineWidth);
 		contentView.invalidate();
 	}
 
 	private void loadText() {
 		String file = (String) getIntent().getExtras().get(FILE);
 		try {
+			FictionBook book = new FictionBook(new File(file));
+
 			StringBuffer sb = new StringBuffer();
-			InputStreamReader reader = new InputStreamReader(
-					new FileInputStream(file), "UTF-8");
 
-			char[] buff = new char[1024 * 5];
-
-			int r;
-			while ((r = reader.read(buff, 0, 1024 * 5)) > 0) {
-				sb.append(buff, 0, r);
+			for (String s : book.getSections()) {
+				sb.append(s);
+				sb.append(' ');
 			}
 
-			reader.close();
-
-			section = new Section(sb.toString());
-
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+			section = new Section(book.getSection(0));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -274,7 +269,9 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 		lineWidth = screenWidth;
 
-		section.splitOnPages(paint, screenWidth, maxLineCount);
+		textWidth = new TextWidthImpl(paint);
+
+		section.splitOnPages(textWidth, screenWidth, maxLineCount);
 
 		next.setEnabled(section.getPageCount() > 1);
 		pageNumber.setText("Page 1 of " + section.getPageCount());

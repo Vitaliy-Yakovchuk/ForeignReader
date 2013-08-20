@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.foriegnreader.pages.Page;
+import com.foriegnreader.textimpl.TextWidthImpl;
 import com.reader.common.AbstractTextProcessor;
 import com.reader.common.ColorConstants;
 import com.reader.common.ObjectsFactory;
@@ -54,18 +55,15 @@ public class PageView extends View {
 		}
 	}
 
-	public void setText(final Page page, final TextPaint textPaint,
+	public void setText(final Page page, final TextWidthImpl textWidth,
 			final int lineHeight, final int lineWidth) {
-		this.textPaint = textPaint;
+		clearSelection();
+		this.textPaint = textWidth.getTextPaint();
 		words.clear();
 		final String text = page.getText();
 		ts = ObjectsFactory.createSimpleSource(text);
 
-		Rect bounds = new Rect();
-
-		textPaint.getTextBounds(" ", 0, 1, bounds);
-
-		final int spaceWidth = bounds.right;
+		final int spaceWidth = textWidth.getWidth(new char[] { 't' }, 0, 1);
 
 		AbstractTextProcessor abstractTextProcessor = new AbstractTextProcessor() {
 
@@ -82,10 +80,15 @@ public class PageView extends View {
 				while (text.charAt(num) != textProperties.getText().charAt(0))
 					num++;
 
+				if (page.lengthLines[line] == 0) {
+					line++;
+				}
+
 				if (page.lengthLines[line] + page.startLines[line] < num
 						+ page.startLines[0]) {
+					boolean end = page.end[line];
 					line++;
-					fillLine();
+					fillLine(end);
 				}
 
 				Word word = new Word();
@@ -101,12 +104,10 @@ public class PageView extends View {
 
 				while (z + 1 < text.length()
 						&& !SimpleTextParser.isTextPart(text.charAt(z + 1))) {
-					if (Character.isWhitespace(text.charAt(z + 1)))
+					if (Character.isWhitespace(text.charAt(z)))
 						break;
 					z++;
 					length++;
-					// if (text.charAt(z + 1) == '\n')
-					// hasParagraph = true;
 				}
 
 				word.length2 = length;
@@ -115,14 +116,40 @@ public class PageView extends View {
 
 				word.text = page.text;
 
-				textPaint.getTextBounds(word.text, word.start, word.length1,
-						word.rect);
-				textPaint.getTextBounds(word.text, word.start, word.length2,
-						rect);
+				word.rect.right = textWidth.getWidth(word.text, word.start,
+						word.length1);
 
-				word.width2 = rect.right;
+				int st = word.start;
+				boolean move = false;
+				while (st > 0) {
+					st--;
+					if (Character.isSpaceChar(page.text[st])) {
+						move = true;
+						break;
+					} else if (SimpleTextParser.isTextPart(page.text[st])) {
+						break;
+					}
+				}
+				st++;
 
-				cWidth += rect.right;
+				if (move) {
+					int d = word.start - st;
+					if (d > 0) {
+						word.start = st;
+						word.length2 += d;
+						int a = textWidth.getWidth(page.text, st, d);
+						word.rect.left = a;
+						word.rect.right += a;
+					}
+				}
+
+				word.rect.bottom = (int) (lineHeight * 0.2);
+				word.rect.top = (int) (-lineHeight * 0.8);
+
+				word.width2 = textWidth.getWidth(word.text, word.start,
+						word.length2);
+
+				cWidth += word.width2;
 				lineWords.add(word);
 				words.add(word);
 				word.lcWord = textProperties.getText().toLowerCase(
@@ -134,24 +161,22 @@ public class PageView extends View {
 			@Override
 			public void end() {
 				line++;
-				fillLine();
+				fillLine(true);
 			}
 
-			Rect rect = new Rect();
+			private void fillLine(boolean end) {
+				int dy = line * lineHeight;// +(int)(lineHeight*0.2);
 
-			private void fillLine() {
-				int dy = line * lineHeight;
-				// if (cWidth * 2 < lineWidth)
-				// hasParagraph = true;
+				int sw;
 
-				int sw; // = spaceWidth;
-
-				// if (!hasParagraph) {
-				if (lineWords.size() > 1)
-					sw = (lineWidth - cWidth) / (lineWords.size() - 1);
-				else
+				if (end)
 					sw = spaceWidth;
-				// }
+				else {
+					if (lineWords.size() > 1)
+						sw = (lineWidth - cWidth) / (lineWords.size() - 1);
+					else
+						sw = spaceWidth;
+				}
 
 				int dx = 0;
 
@@ -288,7 +313,7 @@ public class PageView extends View {
 				sb = new StringBuffer();
 			else
 				sb.append(' ');
-			sb.append(new String(word.text, word.start, word.length2));
+			sb.append(new String(word.text, word.start, word.length1));
 		}
 
 		return sb.toString();
