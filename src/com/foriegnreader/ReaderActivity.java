@@ -26,7 +26,7 @@ import com.reader.common.fb2.FictionBook;
 
 public class ReaderActivity extends Activity implements OnGestureListener {
 
-	private static final int FONT_SIZE = 26;
+	private static final int FONT_SIZE = 32;
 
 	public static final String FILE = "FileName";
 
@@ -59,6 +59,8 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	private GestureDetector gestureScanner;
 
 	private TextWidthImpl textWidth;
+
+	public static boolean splitPages = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -225,7 +227,7 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	private void loadPage() {
 		contentView.setText(section.getPage(), (TextWidthImpl) textWidth,
-				lineHeight, lineWidth);
+				lineHeight, lineWidth, splitPages);
 		contentView.invalidate();
 	}
 
@@ -251,11 +253,6 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		int screenWidth = contentView.getWidth();
 		int screenHeight = contentView.getHeight();
 
-		// DisplayMetrics dm = new DisplayMetrics();
-		// getWindowManager().getDefaultDisplay().getMetrics(dm);
-		// int screenWidth = dm.widthPixels;
-		// int screenHeight = dm.heightPixels;
-
 		paint = new TextPaint();
 
 		paint.setTextSize(FONT_SIZE);
@@ -270,6 +267,12 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		lineWidth = screenWidth;
 
 		textWidth = new TextWidthImpl(paint);
+
+		if (splitPages) {
+			maxLineCount *= 2;
+			screenWidth = (int) (screenWidth * 0.46);
+		}else
+			screenWidth = (int) (screenWidth * 0.96);
 
 		section.splitOnPages(textWidth, screenWidth, maxLineCount);
 
@@ -312,13 +315,11 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		// selectedText.setText("-" + "FLING" + "-");
 		return true;
 	}
 
 	@Override
 	public void onLongPress(MotionEvent e) {
-		// selectedText.setText("-" + "LONG PRESS" + "-");
 	}
 
 	@Override

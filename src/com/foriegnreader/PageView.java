@@ -35,13 +35,35 @@ public class PageView extends View {
 	final int yellow = Color.YELLOW;
 	private int startSelection = -1;
 	private int endSelection = -1;
+	private boolean splitPages;
+
+	private int gr0 = Color.parseColor("#0A0A0A");
+	private int[] gr = new int[6];
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		gr[0] = Color.parseColor("#0F0F0F");
+		gr[1] = Color.parseColor("#AAAAAA");
+		gr[2] = Color.parseColor("#BABABA");
+		gr[3] = Color.parseColor("#CCCCCC");
+		gr[4] = Color.parseColor("#DFDFDF");
+		gr[5] = Color.parseColor("#F0F0F0");
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+
+		if (splitPages) {
+			int c = getWidth() / 2;
+			textPaint.setColor(gr0);
+			canvas.drawLine(c, 0, c, getHeight(), textPaint);
+			for (int i = 0; i < 6; i++) {
+				textPaint.setColor(gr[i]);
+				canvas.drawLine(c + 1 + i, 0, c + 1 + i, getHeight(), textPaint);
+				canvas.drawLine(c - 1 - i, 0, c - 1 - i, getHeight(), textPaint);
+			}
+		}
+
 		for (int i = words.size() - 1; i >= 0; --i) {
 			Word word = words.get(i);
 			if (i >= startSelection && i <= endSelection) {
@@ -56,7 +78,8 @@ public class PageView extends View {
 	}
 
 	public void setText(final Page page, final TextWidthImpl textWidth,
-			final int lineHeight, final int lineWidth) {
+			final int lineHeight, final int lineWidth, final boolean splitPages) {
+		this.splitPages = splitPages;
 		clearSelection();
 		this.textPaint = textWidth.getTextPaint();
 		words.clear();
@@ -143,7 +166,7 @@ public class PageView extends View {
 					}
 				}
 
-				word.rect.bottom = (int) (lineHeight * 0.2);
+				word.rect.bottom = 0;
 				word.rect.top = (int) (-lineHeight * 0.8);
 
 				word.width2 = textWidth.getWidth(word.text, word.start,
@@ -167,22 +190,39 @@ public class PageView extends View {
 			private void fillLine(boolean end) {
 				int dy = line * lineHeight;// +(int)(lineHeight*0.2);
 
+				boolean right = false;
+
+				if (splitPages) {
+					if (line > page.getMaxLineCount() / 2) {
+						right = true;
+						dy = (line - page.getMaxLineCount() / 2) * lineHeight;
+					}
+				}
+
 				int sw;
 
 				if (end)
 					sw = spaceWidth;
 				else {
-					if (lineWords.size() > 1)
-						sw = (lineWidth - cWidth) / (lineWords.size() - 1);
-					else
+					if (lineWords.size() > 1) {
+						if (splitPages)
+							sw = ((int) (lineWidth * 0.45 - cWidth))
+									/ (lineWords.size() - 1);
+						else
+							sw = (lineWidth - cWidth) / (lineWords.size() - 1);
+					} else
 						sw = spaceWidth;
 				}
 
-				int dx = 0;
+				int dx = (int) (lineWidth * 0.02);
+
+				if (right) {
+					dx += lineWidth / 2;
+				}
 
 				for (Word word : lineWords) {
 					word.x = dx;
-					word.y = dy;
+					word.y = dy - (int) (lineHeight * 0.2);
 					word.rect.offset(dx, dy);
 
 					dx += word.width2;

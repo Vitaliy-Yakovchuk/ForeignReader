@@ -28,4 +28,8 @@ public class Page {
 		return new String(text, s, l);
 	}
 
+	public int getMaxLineCount() {
+		return startLines.length;
+	}
+
 }
