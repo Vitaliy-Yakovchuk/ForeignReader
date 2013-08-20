@@ -1,9 +1,14 @@
 package com.foriegnreader;
 
 import java.io.File;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -31,6 +36,8 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	private static final int FONT_SIZE = 32;
 
 	public static final String FILE = "FileName";
+
+	public static final String CURRENT_SECTION = "CURRENT_SECTION";
 
 	private Section section;
 
@@ -62,6 +69,8 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	public static boolean splitPages = true;
 
+	protected static int currentSection;
+
 	/**
 	 * The flags to pass to {@link SystemUiHider#getInstance}.
 	 */
@@ -71,6 +80,8 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
+
+	private FictionBook book;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +98,24 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		yellow = (Button) findViewById(R.id.yellowButton);
 		blue = (Button) findViewById(R.id.blueButton);
 		white = (Button) findViewById(R.id.whiteButton);
+		((Button) findViewById(R.id.selectChapterButton))
+				.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						try {
+							selectChapter();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 
 		contentView.setLoadPage(new Runnable() {
 
 			@Override
 			public void run() {
-				loadFile();
+				loadSection();
 			}
 		});
 
@@ -199,6 +222,27 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	}
 
+	protected void selectChapter() throws Exception {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Chapter");
+		List<String> l = book.getSections();
+		builder.setItems(l.toArray(new CharSequence[l.size()]),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						try {
+							ReaderActivity.currentSection = which;
+							section = new Section(book.getSection(which));
+							loadSection();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+		Dialog d = builder.create();
+		d.show();
+
+	}
+
 	protected void markColor(String color) {
 		contentView.setColor(selectedText.getText().toString(), color);
 		contentView.clearSelection();
@@ -273,8 +317,13 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	private void loadText() {
 		String file = (String) getIntent().getExtras().get(FILE);
+		SharedPreferences settings = getSharedPreferences(CURRENT_SECTION, 0);
+		if (file.equals(settings.getString("file", "")))
+			currentSection = settings.getInt("section", 0);
+		else
+			currentSection = 0;
 		try {
-			FictionBook book = new FictionBook(new File(file));
+			book = new FictionBook(new File(file));
 
 			StringBuffer sb = new StringBuffer();
 
@@ -283,13 +332,13 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 				sb.append(' ');
 			}
 
-			section = new Section(book.getSection(0));
+			section = new Section(book.getSection(currentSection));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void loadFile() {
+	private void loadSection() {
 		int screenWidth = contentView.getWidth();
 		int screenHeight = contentView.getHeight();
 
@@ -318,8 +367,21 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		section.splitOnPages(textWidth, screenWidth, maxLineCount);
 
 		next = section.getPageCount() > 1;
-		if (section.getPageCount() > 0)
-			loadPage(1);
+		if (section.getPageCount() > 0) {
+			String file = (String) getIntent().getExtras().get(FILE);
+			SharedPreferences settings = getSharedPreferences(CURRENT_SECTION,
+					0);
+			if (file.equals(settings.getString("file", "")))
+				if (currentSection == settings.getInt("section", 0)) {
+					int page = settings.getInt("page", 0);
+					if (page >= 0 && page < section.getPageCount()) {
+						section.setCurrentPage(page);
+						next = section.getPageCount() > page + 1;
+						prev = page > 0;
+					}
+				}
+			loadPage(section.getCurrentPage() + 1);
+		}
 	}
 
 	private int dipToPixels(int dipValue) {
@@ -402,6 +464,19 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	private void showControls() {
 		mSystemUiHider.show();
 		getActionBar().show();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		String file = (String) getIntent().getExtras().get(FILE);
+		SharedPreferences settings = getSharedPreferences(CURRENT_SECTION, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("file", file);
+		editor.putInt("section", currentSection);
+		editor.putInt("page", section.getCurrentPage());
+
+		editor.commit();
 	}
 
 }

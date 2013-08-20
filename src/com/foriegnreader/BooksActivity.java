@@ -32,12 +32,22 @@ public class BooksActivity extends Activity {
 
 	private ArrayList<String> files;
 
+	public final static boolean TESTING_STORGE = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_books);
 
-		ObjectsFactory.storageFile = new File(getFilesDir(), "wordsdb");
+		if (TESTING_STORGE)
+			ObjectsFactory.storageFile = new File(getFilesDir(), "words.db");
+		else {
+			File file = new File(Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_PICTURES).getParentFile(),
+					"Foreign Reader");
+			file.mkdirs();
+			ObjectsFactory.storageFile = new File(file, "words.db");
+		}
 
 		final Button addFile = (Button) findViewById(R.id.addFileButton);
 

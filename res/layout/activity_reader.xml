@@ -20,8 +20,7 @@
         <RelativeLayout
             android:id="@+id/fullscreen_controls"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/fullscreen_content" >
+            android:layout_height="wrap_content" >
 
             <Button
                 android:id="@+id/blueButton"
@@ -50,15 +49,6 @@
                 android:text="Y"
                 android:textColor="#000000" />
 
-            <Button
-                android:id="@+id/markAllAsKnown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:text="Mark"
-                android:textColor="#000000" />
-
             <EditText
                 android:id="@+id/selectedText"
                 android:layout_width="wrap_content"
@@ -71,7 +61,26 @@
 
                 <requestFocus />
             </EditText>
+
+            <Button
+                android:id="@+id/selectChapterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="Chapter" />
+
+            <Button
+                android:id="@+id/markAllAsKnown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/selectChapterButton"
+                android:text="Mark"
+                android:textColor="#000000" />
+
         </RelativeLayout>
+
     </FrameLayout>
 
 </RelativeLayout>
