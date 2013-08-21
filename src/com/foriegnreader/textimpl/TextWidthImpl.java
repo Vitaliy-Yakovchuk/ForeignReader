@@ -2,7 +2,7 @@ package com.foriegnreader.textimpl;
 
 import java.util.HashMap;
 
-import com.foriegnreader.textprocessor.TextWidth;
+import com.reader.common.TextWidth;
 
 import android.graphics.Rect;
 import android.text.TextPaint;

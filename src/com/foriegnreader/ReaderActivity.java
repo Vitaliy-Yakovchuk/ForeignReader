@@ -8,32 +8,31 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextPaint;
-import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
-import com.foriegnreader.R;
-import com.foriegnreader.pages.Section;
 import com.foriegnreader.textimpl.TextWidthImpl;
 import com.foriegnreader.util.SystemUiHider;
 import com.reader.common.ColorConstants;
-import com.reader.common.fb2.FictionBook;
+import com.reader.common.book.Book;
+import com.reader.common.book.BookLoader;
+import com.reader.common.book.SectionMetadata;
+import com.reader.common.impl.SectionImpl;
+import com.reader.common.pages.Section;
 
-public class ReaderActivity extends Activity implements OnGestureListener {
+public class ReaderActivity extends Activity {
 
-	private static final int FONT_SIZE = 32;
+	public static final int FONT_SIZE = 32;
 
 	public static final String FILE = "FileName";
 
@@ -61,8 +60,6 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	private Button white;
 
-	private EditText selectedText;
-
 	private GestureDetector gestureScanner;
 
 	private TextWidthImpl textWidth;
@@ -81,13 +78,99 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	 */
 	private SystemUiHider mSystemUiHider;
 
-	private FictionBook book;
+	private Book book;
+
+	private TextOnScreen selectedText;
+
+	private Button sendButton;
+
+	private Button translateButton;
+
+	private boolean translationEnable = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		gestureScanner = new GestureDetector(this.getApplicationContext(), this);
+		gestureScanner = new GestureDetector(this.getApplicationContext(),
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDoubleTap(MotionEvent e) {
+						if (e.getX() < contentView.getWidth() / 3) {
+							if (prev)
+								prev();
+						} else if (e.getX() > contentView.getWidth() / 3 * 2) {
+							if (next)
+								next();
+						} else {
+							if (mSystemUiHider.isVisible()) {
+								hideControls();
+							} else {
+								showControls();
+							}
+						}
+						return true;
+					}
+
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						TextOnScreen text = contentView.select(
+								toContentViewX(e1.getX()),
+								toContentViewY(e1.getY()),
+								toContentViewX(e2.getX()),
+								toContentViewY(e2.getY()), (int) e1.getX(),
+								(int) e1.getY());
+						if (text != null)
+							selectText(text);
+						return true;
+					}
+
+					@Override
+					public void onShowPress(MotionEvent e) {
+						TextOnScreen text = contentView.select(
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()),
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()), (int) e.getX(),
+								(int) e.getY());
+						if (text != null)
+							selectText(text);
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						TextOnScreen text = contentView.select(
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()),
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()), (int) e.getX(),
+								(int) e.getY());
+						if (text != null)
+							selectText(text);
+						else {
+							if (e.getX() < contentView.getWidth() / 20) {
+								if (prev)
+									prev();
+							} else if (e.getX() > contentView.getWidth()
+									- contentView.getWidth() / 20) {
+								if (next)
+									next();
+							} else if (splitPages
+									&& e.getX() > contentView.getWidth() / 2
+											- contentView.getWidth() / 20
+									&& e.getX() < contentView.getWidth() / 2
+											+ contentView.getWidth() / 20) {
+								if (mSystemUiHider.isVisible()) {
+									hideControls();
+								} else {
+									showControls();
+								}
+							}
+						}
+						return true;
+					}
+				});
 
 		setContentView(R.layout.activity_reader);
 
@@ -111,6 +194,29 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 					}
 				});
 
+		sendButton = (Button) findViewById(R.id.sendButton);
+		sendButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				sendText();
+			}
+		});
+
+		translateButton = (Button) findViewById(R.id.translateButton);
+
+		translateButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (!TranslationHelper.translate(ReaderActivity.this,
+						selectedText)) {
+					translationEnable = false;
+					translateButton.setEnabled(false);
+				}
+			}
+		});
+
 		contentView.setLoadPage(new Runnable() {
 
 			@Override
@@ -118,8 +224,6 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 				loadSection();
 			}
 		});
-
-		selectedText = (EditText) findViewById(R.id.selectedText);
 
 		{
 			yellow.setEnabled(false);
@@ -156,24 +260,6 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 			@Override
 			public void onClick(View v) {
 				markColor(ColorConstants.BLUE);
-			}
-		});
-
-		selectedText.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				updateTextMarkButtons(s.length() > 0);
 			}
 		});
 
@@ -222,36 +308,47 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 
 	}
 
+	protected void sendText() {
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_SEND);
+		sendIntent.putExtra(Intent.EXTRA_TEXT, selectedText.text);
+		sendIntent.setType("text/plain");
+		startActivity(Intent.createChooser(sendIntent,
+				getResources().getText(R.string.send_to)));
+	}
+
 	protected void selectChapter() throws Exception {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Chapter");
-		List<String> l = book.getSections();
-		builder.setItems(l.toArray(new CharSequence[l.size()]),
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						try {
-							ReaderActivity.currentSection = which;
-							section = new Section(book.getSection(which));
-							loadSection();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+		List<SectionMetadata> l = book.getSections();
+		CharSequence[] charSequences = new CharSequence[l.size()];
+		for (int i = l.size() - 1; i >= 0; i--)
+			charSequences[i] = l.get(i).getTitle();
+		builder.setItems(charSequences, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				try {
+					ReaderActivity.currentSection = which;
+					section = new SectionImpl(book.getSection(which));
+					loadSection();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		Dialog d = builder.create();
 		d.show();
 
 	}
 
 	protected void markColor(String color) {
-		contentView.setColor(selectedText.getText().toString(), color);
+		contentView.setColor(selectedText.text, color);
 		contentView.clearSelection();
 		contentView.invalidate();
 	}
 
-	public void selectText(String text) {
-		selectedText.setText(text);
-		updateTextMarkButtons(text.length() > 0);
+	public void selectText(TextOnScreen text) {
+		selectedText = text;
+		updateTextMarkButtons(text.text.length() > 0);
 		contentView.invalidate();
 		if (!mSystemUiHider.isVisible())
 			showControls();
@@ -263,12 +360,18 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 				blue.setEnabled(false);
 				yellow.setEnabled(false);
 				white.setEnabled(false);
+				sendButton.setEnabled(false);
+				if (translationEnable)
+					translateButton.setEnabled(false);
 			}
 		} else {
 			if (!blue.isEnabled()) {
 				blue.setEnabled(true);
 				yellow.setEnabled(true);
 				white.setEnabled(true);
+				sendButton.setEnabled(true);
+				if (translationEnable)
+					translateButton.setEnabled(true);
 			}
 		}
 	}
@@ -305,6 +408,7 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 						lineHeight, lineWidth, splitPages, page,
 						section.getPageCount());
 		contentView.invalidate();
+		updateTextMarkButtons(false);
 		if (mSystemUiHider.isVisible()) {
 			hideControls();
 		}
@@ -323,16 +427,16 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		else
 			currentSection = 0;
 		try {
-			book = new FictionBook(new File(file));
+			book = BookLoader.loadBook(new File(file));
 
 			StringBuffer sb = new StringBuffer();
 
-			for (String s : book.getSections()) {
-				sb.append(s);
+			for (SectionMetadata s : book.getSections()) {
+				sb.append(s.getTitle());
 				sb.append(' ');
 			}
 
-			section = new Section(book.getSection(currentSection));
+			section = new SectionImpl(book.getSection(currentSection));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -406,59 +510,6 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	@Override
 	public boolean onTouchEvent(MotionEvent me) {
 		return gestureScanner.onTouchEvent(me);
-	}
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		return true;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-			float velocityY) {
-		return true;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) {
-		String text = contentView.select(toContentViewX(e1.getX()),
-				toContentViewY(e1.getY()), toContentViewX(e2.getX()),
-				toContentViewY(e2.getY()));
-		if (text != null)
-			selectText(text);
-		return true;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		String text = contentView.select(toContentViewX(e.getX()),
-				toContentViewY(e.getY()), toContentViewX(e.getX()),
-				toContentViewY(e.getY()));
-		if (text != null)
-			selectText(text);
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		if (e.getX() < contentView.getWidth() / 3) {
-			if (prev)
-				prev();
-		} else if (e.getX() > contentView.getWidth() / 3 * 2) {
-			if (next)
-				next();
-		} else {
-			if (mSystemUiHider.isVisible()) {
-				hideControls();
-			} else {
-				showControls();
-			}
-		}
-		return true;
 	}
 
 	private void showControls() {

@@ -17,5 +17,8 @@
 
     <string name="err">Error</string>
     <string name="title_activity_reader">ReaderActivity</string>
+    <string name="title_word_list">Words</string>
+    <string name="title_word_detail">Word Detail</string>
+    <string name="send_to">Share text to...</string>
 
 </resources>

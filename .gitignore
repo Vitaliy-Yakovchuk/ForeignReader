@@ -3,3 +3,4 @@ gen
 .project
 .settings
 assets
+libs/words-processor.jar

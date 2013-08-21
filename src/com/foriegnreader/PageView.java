@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import com.foriegnreader.pages.Page;
 import com.foriegnreader.textimpl.TextWidthImpl;
 import com.reader.common.AbstractTextProcessor;
 import com.reader.common.ColorConstants;
@@ -14,6 +13,7 @@ import com.reader.common.ObjectsFactory;
 import com.reader.common.TextSource;
 import com.reader.common.TextWithProperties;
 import com.reader.common.impl.SimpleTextParser;
+import com.reader.common.pages.Page;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -371,7 +371,7 @@ public class PageView extends View {
 		endSelection = -1;
 	}
 
-	public String select(int x1, int y1, int x2, int y2) {
+	public TextOnScreen select(int x1, int y1, int x2, int y2, int x, int y) {
 		startSelection = -1;
 		endSelection = -1;
 		for (int i = words.size() - 1; i >= 0; i--) {
@@ -401,7 +401,13 @@ public class PageView extends View {
 			sb.append(new String(word.text, word.start, word.length2));
 		}
 
-		return sb.toString();
+		TextOnScreen onScreen = new TextOnScreen();
+
+		onScreen.text = sb.toString();
+		onScreen.x = x;
+		onScreen.y = y;
+
+		return onScreen;
 	}
 
 	public Runnable getLoadPage() {
