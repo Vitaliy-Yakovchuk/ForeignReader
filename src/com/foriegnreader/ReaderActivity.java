@@ -84,6 +84,8 @@ public class ReaderActivity extends Activity {
 
 	private Book book;
 
+	private int sectionCount;
+
 	private TextOnScreen selectedText;
 
 	private Button sendButton;
@@ -398,22 +400,36 @@ public class ReaderActivity extends Activity {
 
 	protected void prev() {
 		int p = section.getCurrentPage() - 1;
+		if (p < 0) {
+			currentSection--;
+			loadSection();
+			p = section.getPageCount() - 1;
+			if (p >= 0) {
+				section.setCurrentPage(p);
+				loadPage(p + 1);
+			}
+			if (p == 0 && currentSection == 0)
+				prev = false;
+			return;
+		}
 		section.setCurrentPage(p);
 		loadPage(p + 1);
-		if (p == 0)
+		if (p == 0 && currentSection == 0)
 			prev = false;
-		if (p + 2 == section.getPageCount())
-			next = true;
-
 	}
 
 	protected void next() {
 		int p = section.getCurrentPage() + 1;
+		if (p == section.getPageCount()) {
+			currentSection++;
+			loadSection();
+			return;
+		}
 		section.setCurrentPage(p);
 		loadPage(p + 1);
-		if (p > 0)
-			prev = true;
-		if (p + 1 == section.getPageCount())
+		prev = true;
+		if (p + 1 == section.getPageCount()
+				&& currentSection + 1 == sectionCount)
 			next = false;
 	}
 
@@ -442,6 +458,7 @@ public class ReaderActivity extends Activity {
 		ObjectsFactory.getDefaultBooksDatabase().setBook(bookMetadata);
 		try {
 			book = BookLoader.loadBook(new File(file));
+			sectionCount = book.getSections().size();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -491,14 +508,16 @@ public class ReaderActivity extends Activity {
 			textWidth = new TextWidthImpl(paint);
 		}
 
-		next = section.getPageCount() > 1;
+		next = section.getPageCount() > 1 || currentSection + 1 < sectionCount;
+		prev = currentSection > 0;
 		if (section.getPageCount() > 0) {
 			if (currentSection == bookMetadata.getLastSection()) {
 				section.setCurrentPageByCharacteNumber(bookMetadata
 						.getLastPosition());
 				int page = section.getCurrentPage();
-				next = section.getPageCount() > page + 1;
-				prev = page > 0;
+				next = section.getPageCount() > page + 1
+						|| currentSection + 1 < sectionCount;
+				prev = page > 0 || currentSection + 1 < sectionCount;
 
 			}
 			loadPage(section.getCurrentPage() + 1);
