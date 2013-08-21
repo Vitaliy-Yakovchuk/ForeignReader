@@ -29,9 +29,7 @@ public class TranslationHelper {
 		Intent intent = new Intent(SEARCH_ACTION);
 		intent.putExtra(EXTRA_QUERY, selectedText.text); // Search Query
 		intent.putExtra(EXTRA_FULLSCREEN, false); //
-
-		intent.putExtra(EXTRA_GRAVITY, Gravity.BOTTOM);
-
+		
 		if (isIntentAvailable(activity, intent)) {
 
 			Display display = activity.getWindowManager().getDefaultDisplay();
@@ -43,8 +41,10 @@ public class TranslationHelper {
 				intent.putExtra(EXTRA_HEIGHT,
 						(int) (selectedText.y - (int) (height * 0.05)));
 				intent.putExtra(EXTRA_MARGIN_TOP, (int) (height * 0.01));
+				intent.putExtra(EXTRA_GRAVITY, Gravity.TOP);
 			} else {
-				intent.putExtra(EXTRA_HEIGHT,
+				intent.putExtra(EXTRA_GRAVITY, Gravity.BOTTOM);
+					intent.putExtra(EXTRA_HEIGHT,
 						(int) (height - selectedText.y - (int) (height * 0.05)));
 				intent.putExtra(EXTRA_MARGIN_TOP,
 						(int) (selectedText.y + (int) (height * 0.04)));
