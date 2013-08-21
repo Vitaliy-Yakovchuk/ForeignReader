@@ -254,7 +254,8 @@ public class PageView extends View {
 							sw = ((int) (lineWidth * 0.45 - cWidth))
 									/ (lineWords.size() - 1);
 						else
-							sw = (lineWidth - cWidth) / (lineWords.size() - 1);
+							sw = (int) (lineWidth * 0.96 - cWidth)
+									/ (lineWords.size() - 1);
 					} else
 						sw = spaceWidth;
 				}
@@ -416,6 +417,10 @@ public class PageView extends View {
 
 	public void setLoadPage(Runnable loadPage) {
 		this.loadPage = loadPage;
+	}
+
+	public void setWords(List<Word> words) {
+		this.words = words;
 	}
 
 }

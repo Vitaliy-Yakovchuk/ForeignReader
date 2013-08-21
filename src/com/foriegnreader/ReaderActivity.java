@@ -1,6 +1,7 @@
 package com.foriegnreader;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -9,7 +10,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -21,9 +22,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
+import com.foriegnreader.cache.SectionCacheHelper;
 import com.foriegnreader.textimpl.TextWidthImpl;
 import com.foriegnreader.util.SystemUiHider;
+import com.reader.common.BookMetadata;
 import com.reader.common.ColorConstants;
+import com.reader.common.ObjectsFactory;
 import com.reader.common.book.Book;
 import com.reader.common.book.BookLoader;
 import com.reader.common.book.SectionMetadata;
@@ -88,9 +92,21 @@ public class ReaderActivity extends Activity {
 
 	private boolean translationEnable = true;
 
+	private BookMetadata bookMetadata;
+
+	private SectionCacheHelper sectionCacheHelper;
+
+	private boolean landscape;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
+		splitPages = landscape;
+
+		sectionCacheHelper = new SectionCacheHelper(this);
 
 		gestureScanner = new GestureDetector(this.getApplicationContext(),
 				new GestureDetector.SimpleOnGestureListener() {
@@ -328,7 +344,6 @@ public class ReaderActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				try {
 					ReaderActivity.currentSection = which;
-					section = new SectionImpl(book.getSection(which));
 					loadSection();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -421,28 +436,84 @@ public class ReaderActivity extends Activity {
 
 	private void loadText() {
 		String file = (String) getIntent().getExtras().get(FILE);
-		SharedPreferences settings = getSharedPreferences(CURRENT_SECTION, 0);
-		if (file.equals(settings.getString("file", "")))
-			currentSection = settings.getInt("section", 0);
-		else
-			currentSection = 0;
+		bookMetadata = ObjectsFactory.getDefaultBooksDatabase().getBook(file);
+		currentSection = bookMetadata.getLastSection();
+		bookMetadata.setLastOpen(new Date());
+		ObjectsFactory.getDefaultBooksDatabase().setBook(bookMetadata);
 		try {
 			book = BookLoader.loadBook(new File(file));
-
-			StringBuffer sb = new StringBuffer();
-
-			for (SectionMetadata s : book.getSections()) {
-				sb.append(s.getTitle());
-				sb.append(' ');
-			}
-
-			section = new SectionImpl(book.getSection(currentSection));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			landscape = true;
+			splitPages = true;
+		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+			landscape = false;
+			splitPages = false;
+		}
+		bookMetadata.setLastSection(currentSection);
+		bookMetadata.setLastPosition(section.getCurrentCharacter());
+		contentView.setWords(null);
+
+	}
+
 	private void loadSection() {
+
+		section = sectionCacheHelper.getFromCache(bookMetadata, currentSection,
+				landscape, splitPages, FONT_SIZE, contentView.getWidth(),
+				contentView.getHeight());
+		if (section == null) {
+			loadNativeSection();
+			sectionCacheHelper.setToCache(bookMetadata, currentSection,
+					landscape, splitPages, FONT_SIZE, (SectionImpl) section,
+					contentView.getWidth(), contentView.getHeight());
+		} else {
+			int screenWidth = contentView.getWidth();
+
+			paint = new TextPaint();
+
+			paint.setTextSize(FONT_SIZE);
+			Typeface tf = Typeface.create("serif", Typeface.NORMAL);
+
+			paint.setTypeface(tf);
+			paint.setAntiAlias(true);
+
+			lineHeight = dipToPixels(FONT_SIZE) + 3;
+
+			lineWidth = screenWidth;
+
+			textWidth = new TextWidthImpl(paint);
+		}
+
+		next = section.getPageCount() > 1;
+		if (section.getPageCount() > 0) {
+			if (currentSection == bookMetadata.getLastSection()) {
+				section.setCurrentPageByCharacteNumber(bookMetadata
+						.getLastPosition());
+				int page = section.getCurrentPage();
+				next = section.getPageCount() > page + 1;
+				prev = page > 0;
+
+			}
+			loadPage(section.getCurrentPage() + 1);
+			bookMetadata.setLastPosition(section.getCurrentPage());
+			bookMetadata.setLastSection(currentSection);
+			ObjectsFactory.getDefaultBooksDatabase().setBook(bookMetadata);
+		}
+	}
+
+	private void loadNativeSection() {
+		try {
+			section = new SectionImpl(book.getSection(currentSection));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		int screenWidth = contentView.getWidth();
 		int screenHeight = contentView.getHeight();
 
@@ -455,13 +526,13 @@ public class ReaderActivity extends Activity {
 		paint.setAntiAlias(true);
 
 		lineHeight = dipToPixels(FONT_SIZE) + 3;
-		int maxLineCount = screenHeight / lineHeight - 1;// last row is system
-															// bar
 
 		lineWidth = screenWidth;
 
 		textWidth = new TextWidthImpl(paint);
 
+		int maxLineCount = screenHeight / lineHeight - 1;// last row is system
+		// bar
 		if (splitPages) {
 			maxLineCount *= 2;
 			screenWidth = (int) (screenWidth * 0.46);
@@ -469,23 +540,6 @@ public class ReaderActivity extends Activity {
 			screenWidth = (int) (screenWidth * 0.96);
 
 		section.splitOnPages(textWidth, screenWidth, maxLineCount);
-
-		next = section.getPageCount() > 1;
-		if (section.getPageCount() > 0) {
-			String file = (String) getIntent().getExtras().get(FILE);
-			SharedPreferences settings = getSharedPreferences(CURRENT_SECTION,
-					0);
-			if (file.equals(settings.getString("file", "")))
-				if (currentSection == settings.getInt("section", 0)) {
-					int page = settings.getInt("page", 0);
-					if (page >= 0 && page < section.getPageCount()) {
-						section.setCurrentPage(page);
-						next = section.getPageCount() > page + 1;
-						prev = page > 0;
-					}
-				}
-			loadPage(section.getCurrentPage() + 1);
-		}
 	}
 
 	private int dipToPixels(int dipValue) {
@@ -520,14 +574,11 @@ public class ReaderActivity extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		String file = (String) getIntent().getExtras().get(FILE);
-		SharedPreferences settings = getSharedPreferences(CURRENT_SECTION, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("file", file);
-		editor.putInt("section", currentSection);
-		editor.putInt("page", section.getCurrentPage());
+		bookMetadata.setLastSection(currentSection);
+		bookMetadata.setLastPosition(section.getCurrentCharacter());
+		sectionCacheHelper.close();
 
-		editor.commit();
+		ObjectsFactory.getDefaultBooksDatabase().setBook(bookMetadata);
 	}
 
 }
