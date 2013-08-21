@@ -32,7 +32,7 @@ public class BooksActivity extends Activity {
 
 	private ArrayList<String> files;
 
-	public final static boolean TESTING_STORGE = false;
+	public final static boolean TESTING_STORGE = true;// false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

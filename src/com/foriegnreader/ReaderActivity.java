@@ -1,6 +1,7 @@
 package com.foriegnreader;
 
 import java.io.File;
+
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -29,7 +30,9 @@ import com.foriegnreader.pages.Section;
 import com.foriegnreader.textimpl.TextWidthImpl;
 import com.foriegnreader.util.SystemUiHider;
 import com.reader.common.ColorConstants;
-import com.reader.common.fb2.FictionBook;
+import com.reader.common.book.Book;
+import com.reader.common.book.BookLoader;
+import com.reader.common.book.SectionMetadata;
 
 public class ReaderActivity extends Activity implements OnGestureListener {
 
@@ -81,7 +84,7 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	 */
 	private SystemUiHider mSystemUiHider;
 
-	private FictionBook book;
+	private Book book;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -225,19 +228,21 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	protected void selectChapter() throws Exception {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Chapter");
-		List<String> l = book.getSections();
-		builder.setItems(l.toArray(new CharSequence[l.size()]),
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						try {
-							ReaderActivity.currentSection = which;
-							section = new Section(book.getSection(which));
-							loadSection();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+		List<SectionMetadata> l = book.getSections();
+		CharSequence[] charSequences = new CharSequence[l.size()];
+		for (int i = l.size() - 1; i >= 0; i--)
+			charSequences[i] = l.get(i).getTitle();
+		builder.setItems(charSequences, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				try {
+					ReaderActivity.currentSection = which;
+					section = new Section(book.getSection(which));
+					loadSection();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		Dialog d = builder.create();
 		d.show();
 
@@ -323,12 +328,12 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 		else
 			currentSection = 0;
 		try {
-			book = new FictionBook(new File(file));
+			book = BookLoader.loadBook(new File(file));
 
 			StringBuffer sb = new StringBuffer();
 
-			for (String s : book.getSections()) {
-				sb.append(s);
+			for (SectionMetadata s : book.getSections()) {
+				sb.append(s.getTitle());
 				sb.append(' ');
 			}
 
