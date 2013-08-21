@@ -8,20 +8,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextPaint;
-import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.foriegnreader.pages.Section;
 import com.foriegnreader.textimpl.TextWidthImpl;
@@ -61,8 +59,6 @@ public class ReaderActivity extends Activity {
 
 	private Button white;
 
-	private EditText selectedText;
-
 	private GestureDetector gestureScanner;
 
 	private TextWidthImpl textWidth;
@@ -82,6 +78,14 @@ public class ReaderActivity extends Activity {
 	private SystemUiHider mSystemUiHider;
 
 	private Book book;
+
+	private TextOnScreen selectedText;
+
+	private Button sendButton;
+
+	private Button translateButton;
+
+	private boolean translationEnable = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,11 +114,12 @@ public class ReaderActivity extends Activity {
 					@Override
 					public boolean onScroll(MotionEvent e1, MotionEvent e2,
 							float distanceX, float distanceY) {
-						String text = contentView.select(
+						TextOnScreen text = contentView.select(
 								toContentViewX(e1.getX()),
 								toContentViewY(e1.getY()),
 								toContentViewX(e2.getX()),
-								toContentViewY(e2.getY()));
+								toContentViewY(e2.getY()), (int) e1.getX(),
+								(int) e1.getY());
 						if (text != null)
 							selectText(text);
 						return true;
@@ -122,22 +127,24 @@ public class ReaderActivity extends Activity {
 
 					@Override
 					public void onShowPress(MotionEvent e) {
-						String text = contentView.select(
+						TextOnScreen text = contentView.select(
 								toContentViewX(e.getX()),
 								toContentViewY(e.getY()),
 								toContentViewX(e.getX()),
-								toContentViewY(e.getY()));
+								toContentViewY(e.getY()), (int) e.getX(),
+								(int) e.getY());
 						if (text != null)
 							selectText(text);
 					}
 
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
-						String text = contentView.select(
+						TextOnScreen text = contentView.select(
 								toContentViewX(e.getX()),
 								toContentViewY(e.getY()),
 								toContentViewX(e.getX()),
-								toContentViewY(e.getY()));
+								toContentViewY(e.getY()), (int) e.getX(),
+								(int) e.getY());
 						if (text != null)
 							selectText(text);
 						else {
@@ -186,6 +193,29 @@ public class ReaderActivity extends Activity {
 					}
 				});
 
+		sendButton = (Button) findViewById(R.id.sendButton);
+		sendButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				sendText();
+			}
+		});
+
+		translateButton = (Button) findViewById(R.id.translateButton);
+
+		translateButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (!TranslationHelper.translate(ReaderActivity.this,
+						selectedText)) {
+					translationEnable = false;
+					translateButton.setEnabled(false);
+				}
+			}
+		});
+
 		contentView.setLoadPage(new Runnable() {
 
 			@Override
@@ -193,8 +223,6 @@ public class ReaderActivity extends Activity {
 				loadSection();
 			}
 		});
-
-		selectedText = (EditText) findViewById(R.id.selectedText);
 
 		{
 			yellow.setEnabled(false);
@@ -231,24 +259,6 @@ public class ReaderActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				markColor(ColorConstants.BLUE);
-			}
-		});
-
-		selectedText.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				updateTextMarkButtons(s.length() > 0);
 			}
 		});
 
@@ -297,6 +307,15 @@ public class ReaderActivity extends Activity {
 
 	}
 
+	protected void sendText() {
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_SEND);
+		sendIntent.putExtra(Intent.EXTRA_TEXT, selectedText.text);
+		sendIntent.setType("text/plain");
+		startActivity(Intent.createChooser(sendIntent,
+				getResources().getText(R.string.send_to)));
+	}
+
 	protected void selectChapter() throws Exception {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Chapter");
@@ -321,14 +340,14 @@ public class ReaderActivity extends Activity {
 	}
 
 	protected void markColor(String color) {
-		contentView.setColor(selectedText.getText().toString(), color);
+		contentView.setColor(selectedText.text, color);
 		contentView.clearSelection();
 		contentView.invalidate();
 	}
 
-	public void selectText(String text) {
-		selectedText.setText(text);
-		updateTextMarkButtons(text.length() > 0);
+	public void selectText(TextOnScreen text) {
+		selectedText = text;
+		updateTextMarkButtons(text.text.length() > 0);
 		contentView.invalidate();
 		if (!mSystemUiHider.isVisible())
 			showControls();
@@ -340,12 +359,18 @@ public class ReaderActivity extends Activity {
 				blue.setEnabled(false);
 				yellow.setEnabled(false);
 				white.setEnabled(false);
+				sendButton.setEnabled(false);
+				if (translationEnable)
+					translateButton.setEnabled(false);
 			}
 		} else {
 			if (!blue.isEnabled()) {
 				blue.setEnabled(true);
 				yellow.setEnabled(true);
 				white.setEnabled(true);
+				sendButton.setEnabled(true);
+				if (translationEnable)
+					translateButton.setEnabled(true);
 			}
 		}
 	}
@@ -382,6 +407,7 @@ public class ReaderActivity extends Activity {
 						lineHeight, lineWidth, splitPages, page,
 						section.getPageCount());
 		contentView.invalidate();
+		updateTextMarkButtons(false);
 		if (mSystemUiHider.isVisible()) {
 			hideControls();
 		}

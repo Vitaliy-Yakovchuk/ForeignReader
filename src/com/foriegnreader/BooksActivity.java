@@ -27,6 +27,8 @@ public class BooksActivity extends Activity {
 	public static final String BOOK_FILE = "BOOKS";
 
 	private static final int REQUEST_LOAD = 0;
+	
+	private static final int REQUEST_OPEN_WORDS = 1;
 
 	private ArrayAdapter<String> adapter;
 
@@ -52,6 +54,15 @@ public class BooksActivity extends Activity {
 		final Button addFile = (Button) findViewById(R.id.addFileButton);
 
 		final ListView books = (ListView) findViewById(R.id.bookListView);
+
+		((Button) findViewById(R.id.showWords))
+				.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						openWordsActivity();
+					}
+				});
 
 		addFile.setOnClickListener(new View.OnClickListener() {
 
@@ -84,6 +95,12 @@ public class BooksActivity extends Activity {
 		books.setAdapter(adapter);
 	}
 
+	protected void openWordsActivity() {
+		Intent intent = new Intent(getBaseContext(), WordListActivity.class);
+		startActivityForResult(intent, REQUEST_OPEN_WORDS);
+		
+	}
+
 	protected void openBook(String fileName) {
 		Intent intent = new Intent(getBaseContext(), ReaderActivity.class);
 		intent.putExtra(ReaderActivity.FILE, fileName);
@@ -91,7 +108,7 @@ public class BooksActivity extends Activity {
 		startActivity(intent);
 	}
 
-	void pickFile(File aFile) {
+	private void pickFile(File aFile) {
 		Intent intent = new Intent(getBaseContext(), FileDialog.class);
 		intent.putExtra(FileDialog.START_PATH, Environment
 				.getExternalStorageDirectory().getAbsolutePath());

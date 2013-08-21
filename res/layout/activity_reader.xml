@@ -49,26 +49,14 @@
                 android:text="Y"
                 android:textColor="#000000" />
 
-            <EditText
-                android:id="@+id/selectedText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignTop="@+id/yellowButton"
-                android:layout_toLeftOf="@+id/yellowButton"
-                android:ems="10"
-                android:textColor="#000000" >
-
-                <requestFocus />
-            </EditText>
-
             <Button
                 android:id="@+id/selectChapterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:text="Chapter" />
+                android:text="Chapter"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/markAllAsKnown"
@@ -79,8 +67,24 @@
                 android:text="Mark"
                 android:textColor="#000000" />
 
-        </RelativeLayout>
+            <Button
+                android:id="@+id/translateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:text="Translate" />
 
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="41dp"
+                android:layout_toRightOf="@+id/translateButton"
+                android:text="Send" />
+
+        </RelativeLayout>
     </FrameLayout>
 
 </RelativeLayout>

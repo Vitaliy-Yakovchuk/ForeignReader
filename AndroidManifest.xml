@@ -41,6 +41,23 @@
             android:label="@string/title_activity_reader"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        <activity
+            android:name="com.foriegnreader.WordListActivity"
+            android:label="@string/title_word_list" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.foriegnreader.WordDetailActivity"
+            android:label="@string/title_word_detail"
+            android:parentActivityName=".WordListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WordListActivity" />
+        </activity>
     </application>
 
 </manifest>
