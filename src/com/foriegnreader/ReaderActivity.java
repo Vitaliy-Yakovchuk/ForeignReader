@@ -1,7 +1,6 @@
 package com.foriegnreader;
 
 import java.io.File;
-
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -19,13 +18,11 @@ import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.foriegnreader.R;
 import com.foriegnreader.pages.Section;
 import com.foriegnreader.textimpl.TextWidthImpl;
 import com.foriegnreader.util.SystemUiHider;
@@ -34,7 +31,7 @@ import com.reader.common.book.Book;
 import com.reader.common.book.BookLoader;
 import com.reader.common.book.SectionMetadata;
 
-public class ReaderActivity extends Activity implements OnGestureListener {
+public class ReaderActivity extends Activity {
 
 	private static final int FONT_SIZE = 32;
 
@@ -90,7 +87,82 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		gestureScanner = new GestureDetector(this.getApplicationContext(), this);
+		gestureScanner = new GestureDetector(this.getApplicationContext(),
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					public boolean onDoubleTap(MotionEvent e) {
+						if (e.getX() < contentView.getWidth() / 3) {
+							if (prev)
+								prev();
+						} else if (e.getX() > contentView.getWidth() / 3 * 2) {
+							if (next)
+								next();
+						} else {
+							if (mSystemUiHider.isVisible()) {
+								hideControls();
+							} else {
+								showControls();
+							}
+						}
+						return true;
+					}
+
+					@Override
+					public boolean onScroll(MotionEvent e1, MotionEvent e2,
+							float distanceX, float distanceY) {
+						String text = contentView.select(
+								toContentViewX(e1.getX()),
+								toContentViewY(e1.getY()),
+								toContentViewX(e2.getX()),
+								toContentViewY(e2.getY()));
+						if (text != null)
+							selectText(text);
+						return true;
+					}
+
+					@Override
+					public void onShowPress(MotionEvent e) {
+						String text = contentView.select(
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()),
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()));
+						if (text != null)
+							selectText(text);
+					}
+
+					@Override
+					public boolean onSingleTapUp(MotionEvent e) {
+						String text = contentView.select(
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()),
+								toContentViewX(e.getX()),
+								toContentViewY(e.getY()));
+						if (text != null)
+							selectText(text);
+						else {
+							if (e.getX() < contentView.getWidth() / 20) {
+								if (prev)
+									prev();
+							} else if (e.getX() > contentView.getWidth()
+									- contentView.getWidth() / 20) {
+								if (next)
+									next();
+							} else if (splitPages
+									&& e.getX() > contentView.getWidth() / 2
+											- contentView.getWidth() / 20
+									&& e.getX() < contentView.getWidth() / 2
+											+ contentView.getWidth() / 20) {
+								if (mSystemUiHider.isVisible()) {
+									hideControls();
+								} else {
+									showControls();
+								}
+							}
+						}
+						return true;
+					}
+				});
 
 		setContentView(R.layout.activity_reader);
 
@@ -411,59 +483,6 @@ public class ReaderActivity extends Activity implements OnGestureListener {
 	@Override
 	public boolean onTouchEvent(MotionEvent me) {
 		return gestureScanner.onTouchEvent(me);
-	}
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		return true;
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-			float velocityY) {
-		return true;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-			float distanceY) {
-		String text = contentView.select(toContentViewX(e1.getX()),
-				toContentViewY(e1.getY()), toContentViewX(e2.getX()),
-				toContentViewY(e2.getY()));
-		if (text != null)
-			selectText(text);
-		return true;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		String text = contentView.select(toContentViewX(e.getX()),
-				toContentViewY(e.getY()), toContentViewX(e.getX()),
-				toContentViewY(e.getY()));
-		if (text != null)
-			selectText(text);
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		if (e.getX() < contentView.getWidth() / 3) {
-			if (prev)
-				prev();
-		} else if (e.getX() > contentView.getWidth() / 3 * 2) {
-			if (next)
-				next();
-		} else {
-			if (mSystemUiHider.isVisible()) {
-				hideControls();
-			} else {
-				showControls();
-			}
-		}
-		return true;
 	}
 
 	private void showControls() {
