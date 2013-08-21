@@ -2,14 +2,15 @@ package com.foriegnreader;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Point;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.WindowManager;
 
 public class TranslationHelper {
 
@@ -24,15 +25,16 @@ public class TranslationHelper {
 	public static final String EXTRA_MARGIN_BOTTOM = "EXTRA_MARGIN_BOTTOM";
 	public static final String EXTRA_MARGIN_RIGHT = "EXTRA_MARGIN_RIGHT";
 
-	public static boolean translate(ReaderActivity activity,
-			TextOnScreen selectedText) {
+	public static boolean translate(Context context, TextOnScreen selectedText) {
 		Intent intent = new Intent(SEARCH_ACTION);
 		intent.putExtra(EXTRA_QUERY, selectedText.text); // Search Query
 		intent.putExtra(EXTRA_FULLSCREEN, false); //
-		
-		if (isIntentAvailable(activity, intent)) {
 
-			Display display = activity.getWindowManager().getDefaultDisplay();
+		if (isIntentAvailable(context, intent)) {
+
+			WindowManager wm = (WindowManager) context
+					.getSystemService(Context.WINDOW_SERVICE);
+			Display display = wm.getDefaultDisplay();
 			Point size = new Point();
 			display.getSize(size);
 			int height = size.y;
@@ -44,17 +46,17 @@ public class TranslationHelper {
 				intent.putExtra(EXTRA_GRAVITY, Gravity.TOP);
 			} else {
 				intent.putExtra(EXTRA_GRAVITY, Gravity.BOTTOM);
-					intent.putExtra(EXTRA_HEIGHT,
+				intent.putExtra(EXTRA_HEIGHT,
 						(int) (height - selectedText.y - (int) (height * 0.05)));
 				intent.putExtra(EXTRA_MARGIN_TOP,
 						(int) (selectedText.y + (int) (height * 0.04)));
 			}
 
-			activity.startActivity(intent);
+			context.startActivity(intent);
 			return true;
 		}
 
-		AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
+		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 		alertDialog.setTitle("Dictionary information");
 		alertDialog
 				.setMessage("To enable this feature please install ColorDict/BlueDict/GoldenDict/etc.");
@@ -64,7 +66,7 @@ public class TranslationHelper {
 		return false;
 	}
 
-	public static boolean isIntentAvailable(Activity context, Intent intent) {
+	public static boolean isIntentAvailable(Context context, Intent intent) {
 		final PackageManager packageManager = context.getPackageManager();
 		List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
 				PackageManager.MATCH_DEFAULT_ONLY);
