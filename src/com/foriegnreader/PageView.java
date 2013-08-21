@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import com.foriegnreader.pages.Page;
 import com.foriegnreader.textimpl.TextWidthImpl;
 import com.reader.common.AbstractTextProcessor;
 import com.reader.common.ColorConstants;
@@ -14,6 +13,7 @@ import com.reader.common.ObjectsFactory;
 import com.reader.common.TextSource;
 import com.reader.common.TextWithProperties;
 import com.reader.common.impl.SimpleTextParser;
+import com.reader.common.pages.Page;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -21,13 +21,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
-import com.foriegnreader.pages.Section;
 import com.foriegnreader.textimpl.TextWidthImpl;
 import com.foriegnreader.util.SystemUiHider;
 import com.reader.common.ColorConstants;
 import com.reader.common.book.Book;
 import com.reader.common.book.BookLoader;
 import com.reader.common.book.SectionMetadata;
+import com.reader.common.impl.SectionImpl;
+import com.reader.common.pages.Section;
 
 public class ReaderActivity extends Activity {
 
@@ -327,7 +328,7 @@ public class ReaderActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				try {
 					ReaderActivity.currentSection = which;
-					section = new Section(book.getSection(which));
+					section = new SectionImpl(book.getSection(which));
 					loadSection();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -435,7 +436,7 @@ public class ReaderActivity extends Activity {
 				sb.append(' ');
 			}
 
-			section = new Section(book.getSection(currentSection));
+			section = new SectionImpl(book.getSection(currentSection));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
