@@ -32,7 +32,7 @@ import com.reader.common.pages.Section;
 
 public class ReaderActivity extends Activity {
 
-	private static final int FONT_SIZE = 32;
+	public static final int FONT_SIZE = 32;
 
 	public static final String FILE = "FileName";
 

@@ -1,18 +1,20 @@
 package com.foriegnreader;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.foriegnreader.R;
 import com.lamerman.FileDialog;
 import com.lamerman.SelectionMode;
+import com.reader.common.BookMetadata;
+import com.reader.common.BooksDatabase;
 import com.reader.common.ObjectsFactory;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -24,17 +26,17 @@ import android.widget.ListView;
 
 public class BooksActivity extends Activity {
 
-	public static final String BOOK_FILE = "BOOKS";
-
 	private static final int REQUEST_LOAD = 0;
-	
+
 	private static final int REQUEST_OPEN_WORDS = 1;
 
-	private ArrayAdapter<String> adapter;
+	private ArrayAdapter<BookMetadata> adapter;
 
-	private ArrayList<String> files;
+	private List<BookMetadata> files;
 
 	public final static boolean TESTING_STORGE = true;// false;
+
+	private BooksDatabase booksDatabase;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,16 +83,11 @@ public class BooksActivity extends Activity {
 			}
 		});
 
-		SharedPreferences preferences = getSharedPreferences(BOOK_FILE, 0);
-		String s = preferences.getString("lastFile", "");
+		booksDatabase = ObjectsFactory.getDefaultBooksDatabase();
 
-		files = new ArrayList<String>();
+		files = booksDatabase.getBooks();
 
-		if (new File(s).exists()) {
-			files.add(s);
-		}
-
-		adapter = new ArrayAdapter<String>(this,
+		adapter = new ArrayAdapter<BookMetadata>(this,
 				android.R.layout.simple_list_item_1, files);
 		books.setAdapter(adapter);
 	}
@@ -98,12 +95,12 @@ public class BooksActivity extends Activity {
 	protected void openWordsActivity() {
 		Intent intent = new Intent(getBaseContext(), WordListActivity.class);
 		startActivityForResult(intent, REQUEST_OPEN_WORDS);
-		
+
 	}
 
-	protected void openBook(String fileName) {
+	protected void openBook(BookMetadata filebook) {
 		Intent intent = new Intent(getBaseContext(), ReaderActivity.class);
-		intent.putExtra(ReaderActivity.FILE, fileName);
+		intent.putExtra(ReaderActivity.FILE, filebook.getFileName());
 
 		startActivity(intent);
 	}
@@ -133,16 +130,28 @@ public class BooksActivity extends Activity {
 			}
 
 			String filePath = data.getStringExtra(FileDialog.RESULT_PATH);
-			SharedPreferences settings = getSharedPreferences(BOOK_FILE, 0);
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putString("lastFile", filePath);
-			editor.commit();
-			adapter.add(filePath);
+			BookMetadata bookMetadata = createMetadata(filePath);
+
+			adapter.insert(bookMetadata, 0);
 			adapter.notifyDataSetChanged();
 		} else if (resultCode == Activity.RESULT_CANCELED) {
 			Logger.getLogger(BooksActivity.class.getName()).log(Level.WARNING,
 					"file not selected");
 		}
+	}
+
+	private BookMetadata createMetadata(String path) {
+		File file = new File(path);
+
+		BookMetadata bookMetadata = new BookMetadata();
+		bookMetadata.setFileName(file.getAbsolutePath());
+		bookMetadata.setFontSize(ReaderActivity.FONT_SIZE);
+		bookMetadata.setLastOpen(new Date());
+		bookMetadata.setName(file.getName());
+
+		booksDatabase.setBook(bookMetadata);
+
+		return bookMetadata;
 	}
 
 	@Override
