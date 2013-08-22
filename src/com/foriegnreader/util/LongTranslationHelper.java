@@ -41,10 +41,10 @@ public class LongTranslationHelper {
 			builder.append(s);
 			builder.append('\n');
 		}
-		add(dict.getIndexWord(text, POS.NOUN), "Noun", builder);
-		add(dict.getIndexWord(text, POS.VERB), "Verb", builder);
-		add(dict.getIndexWord(text, POS.ADJECTIVE), "Adjective", builder);
-		add(dict.getIndexWord(text, POS.ADVERB), "Adverb", builder);
+		add(dict.getIndexWord(text, POS.NOUN), "Noun\n", builder);
+		add(dict.getIndexWord(text, POS.VERB), "Verb\n", builder);
+		add(dict.getIndexWord(text, POS.ADJECTIVE), "Adjective\n", builder);
+		add(dict.getIndexWord(text, POS.ADVERB), "Adverb\n", builder);
 	}
 
 	private void add(IIndexWord idxWord, String section,
