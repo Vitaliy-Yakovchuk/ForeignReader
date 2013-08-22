@@ -34,16 +34,16 @@ public class SectionCacheHelper {
 	private void open() {
 		File file = new File(activity.getCacheDir(), "books-data.db");
 		db = DBMaker.newFileDB(file).make();
-		data = db.getTreeMap("cache");
+		data = db.getTreeMap("cache1");
 	}
 
 	public SectionImpl getFromCache(BookMetadata metadata, int section,
-			boolean landscape, boolean splited, int fontSize, int width,
-			int height) {
+			boolean landscape, boolean splited, String fontName, int fontSize,
+			int width, int height) {
 		if (db.isClosed())
 			open();
 		SectionKey key = new SectionKey(metadata.getFileName(), section,
-				landscape, splited, fontSize, width, height);
+				landscape, splited, fontName, fontSize, width, height);
 		if (BooksActivity.TESTING_STORGE)
 			return null;
 		try {
@@ -59,14 +59,14 @@ public class SectionCacheHelper {
 	}
 
 	public void setToCache(BookMetadata metadata, int section,
-			boolean landscape, boolean splited, int fontSize, SectionImpl s,
-			int width, int height) {
+			boolean landscape, boolean splited, String fontName, int fontSize,
+			SectionImpl s, int width, int height) {
 		if (BooksActivity.TESTING_STORGE)
 			return;
 		if (db.isClosed())
 			open();
 		SectionKey key = new SectionKey(metadata.getFileName(), section,
-				landscape, splited, fontSize, width, height);
+				landscape, splited, fontName, fontSize, width, height);
 		data.put(key, s);
 	}
 

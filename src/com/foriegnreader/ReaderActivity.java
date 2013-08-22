@@ -1,7 +1,6 @@
 package com.foriegnreader;
 
 import java.io.File;
-
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -42,7 +42,9 @@ import com.reader.common.pages.Section;
 
 public class ReaderActivity extends Activity {
 
-	public static final int FONT_SIZE = 32;
+	private String fontName = "serif";
+
+	public int fontSize = 30;
 
 	public static final String FILE = "FileName";
 
@@ -124,7 +126,15 @@ public class ReaderActivity extends Activity {
 
 		fastTranslator = new FastTranslator();
 
-		splitPages = landscape;
+		SharedPreferences preferences = getSharedPreferences(
+				ViewSettings.VIEW_PREF, 0);
+
+		splitPages = landscape
+				&& preferences.getBoolean("split_on_landscape", true);
+
+		fontSize = preferences.getInt("font_size", 30);
+
+		fontName = preferences.getString("font_family", "serif");
 
 		sectionCacheHelper = new SectionCacheHelper(this);
 
@@ -490,7 +500,9 @@ public class ReaderActivity extends Activity {
 		super.onConfigurationChanged(newConfig);
 		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			landscape = true;
-			splitPages = true;
+			SharedPreferences preferences = getSharedPreferences(
+					ViewSettings.VIEW_PREF, 0);
+			splitPages = preferences.getBoolean("split_on_landscape", true);
 		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 			landscape = false;
 			splitPages = false;
@@ -505,25 +517,30 @@ public class ReaderActivity extends Activity {
 	private void loadSection() {
 
 		section = sectionCacheHelper.getFromCache(bookMetadata, currentSection,
-				landscape, splitPages, FONT_SIZE, contentView.getWidth(),
-				contentView.getHeight());
+				landscape, splitPages, fontName, fontSize,
+				contentView.getWidth(), contentView.getHeight());
 		if (section == null) {
 			loadNativeSection();
 			sectionCacheHelper.setToCache(bookMetadata, currentSection,
-					landscape, splitPages, FONT_SIZE, (SectionImpl) section,
-					contentView.getWidth(), contentView.getHeight());
+					landscape, splitPages, fontName, fontSize,
+					(SectionImpl) section, contentView.getWidth(),
+					contentView.getHeight());
 		} else {
 			int screenWidth = contentView.getWidth();
 
 			paint = new TextPaint();
 
-			paint.setTextSize(FONT_SIZE);
-			Typeface tf = Typeface.create("serif", Typeface.NORMAL);
+			paint.setTextSize(fontSize);
+			Typeface tf;
+			if ("serif".equals(fontName))
+				tf = Typeface.create(fontName, Typeface.NORMAL);
+			else
+				tf = Typeface.createFromFile(fontName);
 
 			paint.setTypeface(tf);
 			paint.setAntiAlias(true);
 
-			lineHeight = dipToPixels(FONT_SIZE) + 3;
+			lineHeight = dipToPixels(fontSize) + 3;
 
 			lineWidth = screenWidth;
 
@@ -560,13 +577,17 @@ public class ReaderActivity extends Activity {
 
 		paint = new TextPaint();
 
-		paint.setTextSize(FONT_SIZE);
-		Typeface tf = Typeface.create("serif", Typeface.NORMAL);
+		paint.setTextSize(fontSize);
+		Typeface tf;
+		if ("serif".equals(fontName))
+			tf = Typeface.create(fontName, Typeface.NORMAL);
+		else
+			tf = Typeface.createFromFile(fontName);
 
 		paint.setTypeface(tf);
 		paint.setAntiAlias(true);
 
-		lineHeight = dipToPixels(FONT_SIZE) + 3;
+		lineHeight = dipToPixels(fontSize) + 3;
 
 		lineWidth = screenWidth;
 

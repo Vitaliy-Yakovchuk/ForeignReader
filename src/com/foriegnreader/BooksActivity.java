@@ -6,29 +6,31 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.foriegnreader.R;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
 import com.lamerman.FileDialog;
 import com.lamerman.SelectionMode;
 import com.reader.common.BookMetadata;
 import com.reader.common.BooksDatabase;
 import com.reader.common.ObjectsFactory;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Environment;
-import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-
 public class BooksActivity extends Activity {
 
 	private static final int REQUEST_LOAD = 0;
 
 	private static final int REQUEST_OPEN_WORDS = 1;
+
+	private static final int REQUEST_OPEN_VIEW_SETTING = 2;
 
 	private ArrayAdapter<BookMetadata> adapter;
 
@@ -53,26 +55,7 @@ public class BooksActivity extends Activity {
 			ObjectsFactory.storageFile = new File(file, "words.db");
 		}
 
-		final Button addFile = (Button) findViewById(R.id.addFileButton);
-
 		final ListView books = (ListView) findViewById(R.id.bookListView);
-
-		((Button) findViewById(R.id.showWords))
-				.setOnClickListener(new View.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						openWordsActivity();
-					}
-				});
-
-		addFile.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				pickFile(null);
-			}
-		});
 
 		books.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@SuppressWarnings("rawtypes")
@@ -90,6 +73,11 @@ public class BooksActivity extends Activity {
 		adapter = new ArrayAdapter<BookMetadata>(this,
 				android.R.layout.simple_list_item_1, files);
 		books.setAdapter(adapter);
+	}
+
+	protected void openViewSettingActivity() {
+		Intent intent = new Intent(getBaseContext(), ViewSettings.class);
+		startActivityForResult(intent, REQUEST_OPEN_VIEW_SETTING);
 	}
 
 	protected void openWordsActivity() {
@@ -145,7 +133,7 @@ public class BooksActivity extends Activity {
 
 		BookMetadata bookMetadata = new BookMetadata();
 		bookMetadata.setFileName(file.getAbsolutePath());
-		bookMetadata.setFontSize(ReaderActivity.FONT_SIZE);
+		// bookMetadata.setFontSize(ReaderActivity.FONT_SIZE);
 		bookMetadata.setLastOpen(new Date());
 		bookMetadata.setName(file.getName());
 
@@ -156,9 +144,26 @@ public class BooksActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.books, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.books, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.add_file:
+			pickFile(null);
+			return true;
+		case R.id.action_settings:
+			openViewSettingActivity();
+			return true;
+		case R.id.known_words:
+			openWordsActivity();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 }

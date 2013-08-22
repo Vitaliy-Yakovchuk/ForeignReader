@@ -19,6 +19,8 @@
     <string name="title_activity_reader">ReaderActivity</string>
     <string name="title_word_list">Words</string>
     <string name="title_word_detail">Word Detail</string>
-    <string name="send_to">Share text to...</string>
+    <string name="send_to">Share text to&#8230;</string>
+    <string name="title_activity_view_settings">View Settings</string>
+    <string name="known_words">My Dictionary</string>
 
 </resources>

@@ -57,7 +57,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".WordListActivity" />
-        </activity>       
+        </activity>
+        <activity
+            android:name="com.foriegnreader.ViewSettings"
+            android:label="@string/title_activity_view_settings" >
+        </activity>
     </application>
 
 </manifest>

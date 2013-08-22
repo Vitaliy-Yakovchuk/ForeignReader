@@ -8,25 +8,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".BooksActivity" >
 
-    <Button
-        android:id="@+id/addFileButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_file" />
-
     <ListView
         android:id="@+id/bookListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addFileButton" >
+        android:layout_height="wrap_content" >
     </ListView>
-
-    <Button
-        android:id="@+id/showWords"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/addFileButton"
-        android:layout_toRightOf="@+id/addFileButton"
-        android:text="Show words" />
 
 </RelativeLayout>
