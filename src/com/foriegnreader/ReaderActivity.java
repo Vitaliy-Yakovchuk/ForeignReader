@@ -110,6 +110,12 @@ public class ReaderActivity extends Activity {
 
 	private TextView fastTranslation;
 
+	private long downTime = -1;
+
+	private float downY;
+
+	private float downX;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -121,6 +127,8 @@ public class ReaderActivity extends Activity {
 		splitPages = landscape;
 
 		sectionCacheHelper = new SectionCacheHelper(this);
+
+		getActionBar().hide();
 
 		gestureScanner = new GestureDetector(this.getApplicationContext(),
 				new GestureDetector.SimpleOnGestureListener() {
@@ -143,21 +151,9 @@ public class ReaderActivity extends Activity {
 					}
 
 					@Override
-					public boolean onScroll(MotionEvent e1, MotionEvent e2,
-							float distanceX, float distanceY) {
-						TextOnScreen text = contentView.select(
-								toContentViewX(e1.getX()),
-								toContentViewY(e1.getY()),
-								toContentViewX(e2.getX()),
-								toContentViewY(e2.getY()), (int) e1.getX(),
-								(int) e1.getY());
-						if (text != null)
-							selectText(text);
-						return true;
-					}
-
-					@Override
 					public void onShowPress(MotionEvent e) {
+						if (downTime == -1)
+							return;
 						TextOnScreen text = contentView.select(
 								toContentViewX(e.getX()),
 								toContentViewY(e.getY()),
@@ -170,6 +166,8 @@ public class ReaderActivity extends Activity {
 
 					@Override
 					public boolean onSingleTapUp(MotionEvent e) {
+						if (downTime == -1)
+							return true;
 						TextOnScreen text = contentView.select(
 								toContentViewX(e.getX()),
 								toContentViewY(e.getY()),
@@ -471,7 +469,6 @@ public class ReaderActivity extends Activity {
 
 	private void hideControls() {
 		mSystemUiHider.hide();
-		getActionBar().hide();
 	}
 
 	private void loadText() {
@@ -499,7 +496,8 @@ public class ReaderActivity extends Activity {
 			splitPages = false;
 		}
 		bookMetadata.setLastSection(currentSection);
-		bookMetadata.setLastPosition(section.getCurrentCharacter());
+		if (section != null)
+			bookMetadata.setLastPosition(section.getCurrentCharacter());
 		contentView.setWords(null);
 
 	}
@@ -606,12 +604,57 @@ public class ReaderActivity extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent me) {
+		if (me.getAction() == MotionEvent.ACTION_DOWN) {
+			downTime = System.currentTimeMillis();
+			downX = me.getX();
+			downY = me.getY();
+		} else if (me.getAction() == MotionEvent.ACTION_MOVE) {
+			if (downTime == -1)
+				return false;
+			if (System.currentTimeMillis() - downTime < 210) {
+				return tryChangePage(me);
+			}
+			if (downTime == -1)
+				return true;
+			TextOnScreen text = contentView
+					.select(toContentViewX(downX), toContentViewY(downY),
+							toContentViewX(me.getX()),
+							toContentViewY(me.getY()), (int) me.getX(),
+							(int) me.getY());
+			if (text != null) {
+				selectText(text);
+				return true;
+			}
+		}
 		return gestureScanner.onTouchEvent(me);
+	}
+
+	private boolean tryChangePage(MotionEvent e2) {
+		float distanceX;
+		float distanceY;
+		distanceX = e2.getX() - downX;
+		distanceY = e2.getY() - downY;
+		if (Math.abs(distanceX) > Math.abs(distanceY)
+				&& contentView.getWidth() * 0.05 < Math.abs(distanceX)) {
+			if (distanceX > 0) {
+				if (prev) {
+					prev();
+					downTime = -1;
+					return true;
+				}
+			} else {
+				if (next) {
+					next();
+					downTime = -1;
+					return true;
+				}
+			}
+		}
+		return true;
 	}
 
 	private void showControls() {
 		mSystemUiHider.show();
-		getActionBar().show();
 	}
 
 	@Override
