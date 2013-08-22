@@ -80,19 +80,28 @@ public class LongTranslationHelper {
 				builder.append(word.getSynset().getGloss());
 				builder.append('\n');
 				List<IWordID> related = word.getRelatedWords();
-				if (related.size() > 0) {
+				boolean hasR = false;
+
+				for (IWordID r : related)
+					if (r.getLemma() != null) {
+						hasR = true;
+						break;
+					}
+
+				if (hasR) {
 					s = builder.length();
 					builder.append("Related: ");
 
 					first = true;
 
-					for (IWordID r : related) {
-						if (first)
-							first = false;
-						else
-							builder.append("; ");
-						builder.append(r.getLemma());
-					}
+					for (IWordID r : related)
+						if (r.getLemma() != null) {
+							if (first)
+								first = false;
+							else
+								builder.append("; ");
+							builder.append(r.getLemma());
+						}
 				}
 				number++;
 			}
