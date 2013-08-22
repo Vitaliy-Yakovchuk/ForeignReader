@@ -21,7 +21,8 @@ public class FastTranslator {
 
 	public String getMeaning(String word) {
 		openIfNeed();
-		return TranslationHelper.normilize(meanings.get(word));
+		return TranslationHelper.normilize(meanings.get(TranslationHelper
+				.normilize(word)));
 	}
 
 	public void openIfNeed() {
