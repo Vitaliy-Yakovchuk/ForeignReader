@@ -1,6 +1,7 @@
 package com.foriegnreader;
 
 import java.io.File;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,10 +13,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.text.TextPaint;
+import android.text.style.BackgroundColorSpan;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -208,6 +212,7 @@ public class ReaderActivity extends Activity {
 		blue = (Button) findViewById(R.id.blueButton);
 		white = (Button) findViewById(R.id.whiteButton);
 		fastTranslation = (TextView) findViewById(R.id.translationText);
+		fastTranslation.setBackgroundColor(Color.WHITE);
 
 		((Button) findViewById(R.id.selectChapterButton))
 				.setOnClickListener(new View.OnClickListener() {
@@ -378,6 +383,9 @@ public class ReaderActivity extends Activity {
 			String m = fastTranslator.getMeaning(normilize);
 			if (m != null) {
 				clean = false;
+				SpannableString spannableString = new SpannableString(m);
+				spannableString.setSpan(new BackgroundColorSpan(Color.WHITE),
+						0, m.length(), 0);
 				fastTranslation.setText(m);
 			}
 		}

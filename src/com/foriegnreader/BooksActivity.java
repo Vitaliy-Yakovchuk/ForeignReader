@@ -34,7 +34,7 @@ public class BooksActivity extends Activity {
 
 	private List<BookMetadata> files;
 
-	public final static boolean TESTING_STORGE = true;// false;
+	public final static boolean TESTING_STORGE = false;// false;
 
 	private BooksDatabase booksDatabase;
 
