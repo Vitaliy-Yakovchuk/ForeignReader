@@ -63,7 +63,7 @@ public class ViewSettings extends Activity {
 		});
 
 		SeekBar sb = (SeekBar) findViewById(R.id.fontSizeBar);
-		sb.setProgress(preferences.getInt("font_size", 30));
+		sb.setProgress(preferences.getInt("font_size", 30)-10);
 
 		CheckBox splitPages = (CheckBox) findViewById(R.id.splitOnLandscapeCheckBox);
 		splitPages.setChecked(preferences
@@ -79,7 +79,7 @@ public class ViewSettings extends Activity {
 
 		editor.putString("font_family", selectedFontPath);
 		editor.putInt("font_size",
-				((SeekBar) findViewById(R.id.fontSizeBar)).getProgress());
+				((SeekBar) findViewById(R.id.fontSizeBar)).getProgress()+10);
 		editor.putBoolean("split_on_landscape",
 				((CheckBox) findViewById(R.id.splitOnLandscapeCheckBox))
 						.isChecked());

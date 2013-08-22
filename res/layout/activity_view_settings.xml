@@ -35,7 +35,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/prLabal1"
         android:max="80"
-        android:progress="30" />
+        android:progress="20" />
 
     <TextView
         android:id="@+id/prLabal2"
