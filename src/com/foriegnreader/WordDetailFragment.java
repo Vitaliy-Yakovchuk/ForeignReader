@@ -3,12 +3,15 @@ package com.foriegnreader;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableStringBuilder;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.foriegnreader.util.LongTranslationHelper;
 import com.foriegnreader.words.WordsContent;
 import com.reader.common.Word;
 
@@ -36,9 +39,13 @@ public class WordDetailFragment extends Fragment {
 	public WordDetailFragment() {
 	}
 
+	private LongTranslationHelper longTranslationHelper = new LongTranslationHelper();
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		longTranslationHelper = new LongTranslationHelper();
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			// Load the dummy content specified by the fragment
@@ -56,6 +63,18 @@ public class WordDetailFragment extends Fragment {
 
 		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
+			
+			final TextView longTranslation = (TextView) rootView
+					.findViewById(R.id.longTranslationText);
+
+			longTranslation.setMovementMethod(new ScrollingMovementMethod());
+			
+			SpannableStringBuilder builder = new SpannableStringBuilder();
+			
+			longTranslationHelper.getTranslation(mItem.getText(), builder);
+
+			longTranslation.setText(builder);
+			
 			final TextView textView = (TextView) rootView
 					.findViewById(R.id.word_detail);
 			textView.setText(mItem.getText());
@@ -97,5 +116,10 @@ public class WordDetailFragment extends Fragment {
 		}
 
 		return rootView;
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
 	}
 }

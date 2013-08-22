@@ -1,5 +1,7 @@
 package com.foriegnreader;
 
+import com.foriegnreader.util.LongTranslationHelper;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -72,5 +74,11 @@ public class WordListActivity extends FragmentActivity implements
 			detailIntent.putExtra(WordDetailFragment.ARG_ITEM_ID, id);
 			startActivity(detailIntent);
 		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		new LongTranslationHelper().close();
 	}
 }

@@ -31,4 +31,16 @@
         android:layout_alignParentLeft="true"
         android:text="Translate" />
 
+    <TextView
+        android:id="@+id/longTranslationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/wordSendButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/word_detail"
+        android:ellipsize="none"
+        android:scrollHorizontally="false"
+        android:text="" />
+
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.foriegnreader.cache;
 
 import java.io.File;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.mapdb.DBMaker;
 
 import android.app.Activity;
 
+import com.foriegnreader.BooksActivity;
 import com.reader.common.BookMetadata;
 import com.reader.common.impl.SectionImpl;
 import com.reader.common.pages.Page;
@@ -42,17 +44,25 @@ public class SectionCacheHelper {
 			open();
 		SectionKey key = new SectionKey(metadata.getFileName(), section,
 				landscape, splited, fontSize, width, height);
-		SectionImpl sData = data.get(key);
-		if (sData == null)
+		if (BooksActivity.TESTING_STORGE)
 			return null;
-		for (Page page : sData.getPages())
-			page.text = sData.getT();
-		return sData;
+		try {
+			SectionImpl sData = data.get(key);
+			if (sData == null)
+				return null;
+			for (Page page : sData.getPages())
+				page.text = sData.getT();
+			return sData;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public void setToCache(BookMetadata metadata, int section,
 			boolean landscape, boolean splited, int fontSize, SectionImpl s,
 			int width, int height) {
+		if (BooksActivity.TESTING_STORGE)
+			return;
 		if (db.isClosed())
 			open();
 		SectionKey key = new SectionKey(metadata.getFileName(), section,
