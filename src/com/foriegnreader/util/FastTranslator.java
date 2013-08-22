@@ -1,6 +1,7 @@
 package com.foriegnreader.util;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 import org.mapdb.DB;
@@ -21,8 +22,11 @@ public class FastTranslator {
 
 	public String getMeaning(String word) {
 		openIfNeed();
-		return TranslationHelper.normilize(meanings.get(TranslationHelper
-				.normilize(word)));
+		String t = meanings.get(TranslationHelper.normilize(word
+				.toLowerCase(Locale.getDefault())));
+		if (t == null)
+			return null;
+		return TranslationHelper.normilize(t);
 	}
 
 	public void openIfNeed() {
