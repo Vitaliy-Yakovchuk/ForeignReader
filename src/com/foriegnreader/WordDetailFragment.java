@@ -67,8 +67,10 @@ public class WordDetailFragment extends Fragment {
 						public void onClick(View v) {
 							Intent sendIntent = new Intent();
 							sendIntent.setAction(Intent.ACTION_SEND);
-							sendIntent.putExtra(Intent.EXTRA_TEXT,
-									mItem.getText());
+							sendIntent
+									.putExtra(Intent.EXTRA_TEXT,
+											TranslationHelper.normilize(mItem
+													.getText()));
 							sendIntent.setType("text/plain");
 							startActivity(Intent.createChooser(sendIntent,
 									getResources().getText(R.string.send_to)));
@@ -86,7 +88,7 @@ public class WordDetailFragment extends Fragment {
 							textView.getLocationOnScreen(location);
 
 							textOnScreen.x = location[0];
-							textOnScreen.y = location[1]+textView.getHeight();
+							textOnScreen.y = location[1] + textView.getHeight();
 
 							TranslationHelper.translate(rootView.getContext(),
 									textOnScreen);

@@ -73,7 +73,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:text="Translate" />
+                android:text="Translate"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/sendButton"
@@ -82,8 +83,20 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginLeft="41dp"
                 android:layout_toRightOf="@+id/translateButton"
-                android:text="Send" />
+                android:text="Send"
+                android:textColor="#000000" />
 
+            <TextView
+                android:id="@+id/translationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/translateButton"
+                android:layout_alignBottom="@+id/translateButton"
+                android:layout_toLeftOf="@+id/yellowButton"
+                android:layout_toRightOf="@+id/sendButton"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
         </RelativeLayout>
     </FrameLayout>
 

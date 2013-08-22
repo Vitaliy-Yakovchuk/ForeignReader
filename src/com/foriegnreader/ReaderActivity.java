@@ -21,9 +21,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.foriegnreader.cache.SectionCacheHelper;
 import com.foriegnreader.textimpl.TextWidthImpl;
+import com.foriegnreader.util.FastTranslator;
 import com.foriegnreader.util.SystemUiHider;
 import com.reader.common.BookMetadata;
 import com.reader.common.ColorConstants;
@@ -100,11 +102,17 @@ public class ReaderActivity extends Activity {
 
 	private boolean landscape;
 
+	private FastTranslator fastTranslator;
+
+	private TextView fastTranslation;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
+		fastTranslator = new FastTranslator();
 
 		splitPages = landscape;
 
@@ -199,6 +207,8 @@ public class ReaderActivity extends Activity {
 		yellow = (Button) findViewById(R.id.yellowButton);
 		blue = (Button) findViewById(R.id.blueButton);
 		white = (Button) findViewById(R.id.whiteButton);
+		fastTranslation = (TextView) findViewById(R.id.translationText);
+
 		((Button) findViewById(R.id.selectChapterButton))
 				.setOnClickListener(new View.OnClickListener() {
 
@@ -298,10 +308,6 @@ public class ReaderActivity extends Activity {
 					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 					public void onVisibilityChange(boolean visible) {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-							// If the ViewPropertyAnimator API is available
-							// (Honeycomb MR2 and later), use it to animate the
-							// in-layout UI controls at the bottom of the
-							// screen.
 							if (mControlsHeight == 0) {
 								mControlsHeight = controlsView.getHeight();
 							}
@@ -314,9 +320,6 @@ public class ReaderActivity extends Activity {
 									.translationY(visible ? 0 : mControlsHeight)
 									.setDuration(mShortAnimTime);
 						} else {
-							// If the ViewPropertyAnimator APIs aren't
-							// available, simply show or hide the in-layout UI
-							// controls.
 							controlsView.setVisibility(visible ? View.VISIBLE
 									: View.GONE);
 						}
@@ -329,7 +332,8 @@ public class ReaderActivity extends Activity {
 	protected void sendText() {
 		Intent sendIntent = new Intent();
 		sendIntent.setAction(Intent.ACTION_SEND);
-		sendIntent.putExtra(Intent.EXTRA_TEXT, selectedText.text);
+		sendIntent.putExtra(Intent.EXTRA_TEXT,
+				TranslationHelper.normilize(selectedText.text));
 		sendIntent.setType("text/plain");
 		startActivity(Intent.createChooser(sendIntent,
 				getResources().getText(R.string.send_to)));
@@ -360,6 +364,7 @@ public class ReaderActivity extends Activity {
 	protected void markColor(String color) {
 		contentView.setColor(selectedText.text, color);
 		contentView.clearSelection();
+		fastTranslation.setText("");
 		contentView.invalidate();
 	}
 
@@ -367,6 +372,17 @@ public class ReaderActivity extends Activity {
 		selectedText = text;
 		updateTextMarkButtons(text.text.length() > 0);
 		contentView.invalidate();
+		String normilize = TranslationHelper.normilize(text.text);
+		boolean clean = true;
+		if (normilize.length() > 0) {
+			String m = fastTranslator.getMeaning(normilize);
+			if (m != null) {
+				clean = false;
+				fastTranslation.setText(m);
+			}
+		}
+		if (clean)
+			fastTranslation.setText("");
 		if (!mSystemUiHider.isVisible())
 			showControls();
 	}
@@ -598,6 +614,7 @@ public class ReaderActivity extends Activity {
 		sectionCacheHelper.close();
 
 		ObjectsFactory.getDefaultBooksDatabase().setBook(bookMetadata);
+		fastTranslator.close();
 	}
 
 }

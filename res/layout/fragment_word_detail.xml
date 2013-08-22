@@ -15,14 +15,6 @@
         android:textIsSelectable="true" />
 
     <Button
-        android:id="@+id/wordTranslateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/word_detail"
-        android:text="Translate" />
-
-    <Button
         android:id="@+id/wordSendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,5 +22,13 @@
         android:layout_marginLeft="50dp"
         android:layout_toRightOf="@+id/wordTranslateButton"
         android:text="Send" />
+
+    <Button
+        android:id="@+id/wordTranslateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="Translate" />
 
 </RelativeLayout>

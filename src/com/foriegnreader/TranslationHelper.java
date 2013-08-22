@@ -2,6 +2,8 @@ package com.foriegnreader;
 
 import java.util.List;
 
+import com.reader.common.impl.SimpleTextParser;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -25,10 +27,32 @@ public class TranslationHelper {
 	public static final String EXTRA_MARGIN_BOTTOM = "EXTRA_MARGIN_BOTTOM";
 	public static final String EXTRA_MARGIN_RIGHT = "EXTRA_MARGIN_RIGHT";
 
+	public static String normilize(String t) {
+		final StringBuffer text = new StringBuffer();
+
+		SimpleTextParser parser = new SimpleTextParser() {
+
+			boolean first = true;
+
+			@Override
+			public void processWord(char[] textCharArray, int start, int len) {
+				if (first)
+					first = false;
+				else
+					text.append(' ');
+
+				text.append(textCharArray, start, len);
+			}
+		};
+		parser.parse(t.toCharArray());
+		return text.toString();
+	}
+
 	public static boolean translate(Context context, TextOnScreen selectedText) {
+
 		Intent intent = new Intent(SEARCH_ACTION);
-		intent.putExtra(EXTRA_QUERY, selectedText.text); // Search Query
-		intent.putExtra(EXTRA_FULLSCREEN, false); //
+		intent.putExtra(EXTRA_QUERY, normilize(selectedText.text));
+		intent.putExtra(EXTRA_FULLSCREEN, false);
 
 		if (isIntentAvailable(context, intent)) {
 
