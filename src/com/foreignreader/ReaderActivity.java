@@ -243,6 +243,8 @@ public class ReaderActivity extends Activity {
 					public void onProgressChanged(SeekBar seekBar,
 							int progress, boolean fromUser) {
 						i = progress;
+						if (splitPages)
+							progress *= 2;
 						pageNumber.setText(Integer.toString(progress + 1));
 					}
 				});
@@ -657,7 +659,8 @@ public class ReaderActivity extends Activity {
 
 		int maxLineCount = screenHeight / lineHeight;
 
-		float l = screenHeight - lineHeight * maxLineCount - (lineHeight * 0.2f);
+		float l = (screenHeight - (lineHeight * 0.1f)) - lineHeight
+				* maxLineCount;
 		lineHeight += l / maxLineCount;
 
 		if (splitPages) {
