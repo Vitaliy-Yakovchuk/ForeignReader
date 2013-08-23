@@ -657,7 +657,7 @@ public class ReaderActivity extends Activity {
 
 		int maxLineCount = screenHeight / lineHeight;
 
-		float l = screenHeight - lineHeight * maxLineCount - (lineHeight * 0.3f);
+		float l = screenHeight - lineHeight * maxLineCount - (lineHeight * 0.2f);
 		lineHeight += l / maxLineCount;
 
 		if (splitPages) {
