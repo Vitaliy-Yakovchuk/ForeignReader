@@ -1,4 +1,4 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 import java.io.File;
 import java.util.Date;
@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.foreignreader.R;
 import com.lamerman.FileDialog;
 import com.lamerman.SelectionMode;
 import com.reader.common.BookMetadata;

@@ -1,4 +1,4 @@
-package com.foriegnreader.util;
+package com.foreignreader.util;
 
 import java.io.File;
 import java.util.Locale;
@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentNavigableMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
-import com.foriegnreader.TranslationHelper;
+import com.foreignreader.TranslationHelper;
 
 import android.os.Environment;
 

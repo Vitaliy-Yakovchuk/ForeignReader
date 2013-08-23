@@ -1,4 +1,4 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import com.foriegnreader.textimpl.TextWidthImpl;
+import com.foreignreader.textimpl.TextWidthImpl;
 import com.reader.common.AbstractTextProcessor;
 import com.reader.common.ColorConstants;
 import com.reader.common.ObjectsFactory;

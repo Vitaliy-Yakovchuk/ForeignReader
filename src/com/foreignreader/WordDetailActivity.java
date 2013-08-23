@@ -1,4 +1,6 @@
-package com.foriegnreader;
+package com.foreignreader;
+
+import com.foreignreader.R;
 
 import android.content.Intent;
 import android.os.Bundle;

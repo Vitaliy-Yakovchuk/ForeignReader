@@ -1,4 +1,4 @@
-package com.foriegnreader.textimpl;
+package com.foreignreader.textimpl;
 
 import java.util.HashMap;
 

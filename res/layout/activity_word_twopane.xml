@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/word_list"
-        android:name="com.foriegnreader.WordListFragment"
+        android:name="com.foreignreader.WordListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

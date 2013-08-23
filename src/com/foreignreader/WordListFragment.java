@@ -1,4 +1,4 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.foriegnreader.words.WordsContent;
+import com.foreignreader.words.WordsContent;
 import com.reader.common.Word;
 
 /**

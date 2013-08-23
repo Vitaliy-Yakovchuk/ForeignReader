@@ -1,4 +1,4 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 import java.io.File;
 import java.util.Date;
@@ -28,10 +28,11 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.foriegnreader.cache.SectionCacheHelper;
-import com.foriegnreader.textimpl.TextWidthImpl;
-import com.foriegnreader.util.FastTranslator;
-import com.foriegnreader.util.SystemUiHider;
+import com.foreignreader.cache.SectionCacheHelper;
+import com.foreignreader.textimpl.TextWidthImpl;
+import com.foreignreader.util.FastTranslator;
+import com.foreignreader.util.SystemUiHider;
+import com.foreignreader.R;
 import com.reader.common.BookMetadata;
 import com.reader.common.ColorConstants;
 import com.reader.common.ObjectsFactory;

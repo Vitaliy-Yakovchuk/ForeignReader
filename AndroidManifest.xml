@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.foriegnreader"
+    package="com.foreignreader"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.foriegnreader.BooksActivity"
+            android:name="com.foreignreader.BooksActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,13 +36,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.foriegnreader.ReaderActivity"
+            android:name="com.foreignreader.ReaderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_reader"
             android:theme="@style/FullscreenTheme" >
         </activity>
         <activity
-            android:name="com.foriegnreader.WordListActivity"
+            android:name="com.foreignreader.WordListActivity"
             android:label="@string/title_word_list" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,15 +51,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.foriegnreader.WordDetailActivity"
+            android:name="com.foreignreader.WordDetailActivity"
             android:label="@string/title_word_detail"
-            android:parentActivityName=".WordListActivity" >
+            android:parentActivityName="com.foreignreader.WordListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".WordListActivity" />
         </activity>
         <activity
-            android:name="com.foriegnreader.ViewSettings"
+            android:name="com.foreignreader.ViewSettings"
             android:label="@string/title_activity_view_settings" >
         </activity>
     </application>

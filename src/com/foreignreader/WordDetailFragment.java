@@ -1,4 +1,4 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,8 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.foriegnreader.util.LongTranslationHelper;
-import com.foriegnreader.words.WordsContent;
+import com.foreignreader.util.LongTranslationHelper;
+import com.foreignreader.words.WordsContent;
+import com.foreignreader.R;
 import com.reader.common.Word;
 
 /**

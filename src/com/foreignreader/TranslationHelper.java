@@ -1,7 +1,8 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 import java.util.List;
 
+import com.foreignreader.R;
 import com.reader.common.impl.SimpleTextParser;
 
 import android.app.AlertDialog;

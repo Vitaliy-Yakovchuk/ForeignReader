@@ -1,4 +1,4 @@
-package com.foriegnreader.words;
+package com.foreignreader.words;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 public class TextOnScreen {
 

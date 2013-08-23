@@ -1,9 +1,9 @@
-package com.foriegnreader.util;
+package com.foreignreader.util;
 
 import java.io.File;
 import java.util.List;
 
-import com.foriegnreader.TranslationHelper;
+import com.foreignreader.TranslationHelper;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.item.IIndexWord;

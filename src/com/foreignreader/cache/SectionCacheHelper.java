@@ -1,4 +1,4 @@
-package com.foriegnreader.cache;
+package com.foreignreader.cache;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.foriegnreader.util;
+package com.foreignreader.util;
 
 import android.app.Activity;
 import android.os.Build;

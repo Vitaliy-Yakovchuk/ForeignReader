@@ -1,11 +1,12 @@
-package com.foriegnreader;
+package com.foreignreader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.foriegnreader.util.FontManager;
+import com.foreignreader.util.FontManager;
+import com.foreignreader.R;
 
 import android.os.Bundle;
 import android.widget.CheckBox;
