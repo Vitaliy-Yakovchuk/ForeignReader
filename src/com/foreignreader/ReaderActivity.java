@@ -655,7 +655,10 @@ public class ReaderActivity extends Activity {
 
 		screenHeight -= fastTranslation.getHeight() + (int) (lineHeight * 0.3);
 
-		int maxLineCount = screenHeight / lineHeight-1;
+		int maxLineCount = screenHeight / lineHeight;
+
+		float l = screenHeight - lineHeight * maxLineCount - (lineHeight * 0.3f);
+		lineHeight += l / maxLineCount;
 
 		if (splitPages) {
 			maxLineCount *= 2;
