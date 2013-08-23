@@ -492,6 +492,7 @@ public class ReaderActivity extends Activity {
 		}
 		section.setCurrentPage(p);
 		loadPage(p + 1);
+		next = true;
 		if (p == 0 && currentSection == 0)
 			prev = false;
 	}
