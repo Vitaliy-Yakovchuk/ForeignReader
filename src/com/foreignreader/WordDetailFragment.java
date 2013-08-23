@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.foreignreader.util.LongTranslationHelper;
 import com.foreignreader.words.WordsContent;
 import com.foreignreader.R;
+import com.reader.common.ColorConstants;
+import com.reader.common.ObjectsFactory;
 import com.reader.common.Word;
 
 /**
@@ -41,11 +43,11 @@ public class WordDetailFragment extends Fragment {
 	}
 
 	private LongTranslationHelper longTranslationHelper = new LongTranslationHelper();
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		longTranslationHelper = new LongTranslationHelper();
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
@@ -64,18 +66,29 @@ public class WordDetailFragment extends Fragment {
 
 		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
-			
+
 			final TextView longTranslation = (TextView) rootView
 					.findViewById(R.id.longTranslationText);
 
+			((Button) rootView.findViewById(R.id.markWordAsKnowButton))
+					.setOnClickListener(new View.OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							ObjectsFactory.createSimpleSource("").markColor(
+									mItem.getText(), ColorConstants.WHITE);
+							v.setEnabled(false);
+						}
+					});
+
 			longTranslation.setMovementMethod(new ScrollingMovementMethod());
-			
+
 			SpannableStringBuilder builder = new SpannableStringBuilder();
-			
+
 			longTranslationHelper.getTranslation(mItem.getText(), builder);
 
 			longTranslation.setText(builder);
-			
+
 			final TextView textView = (TextView) rootView
 					.findViewById(R.id.word_detail);
 			textView.setText(mItem.getText());
@@ -118,7 +131,7 @@ public class WordDetailFragment extends Fragment {
 
 		return rootView;
 	}
-	
+
 	@Override
 	public void onStop() {
 		super.onStop();

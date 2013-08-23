@@ -43,4 +43,12 @@
         android:scrollHorizontally="false"
         android:text="" />
 
+    <Button
+        android:id="@+id/markWordAsKnowButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/mark_word_as_knows" />
+
 </RelativeLayout>

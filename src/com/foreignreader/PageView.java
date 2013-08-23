@@ -44,7 +44,6 @@ public class PageView extends View {
 	private int pageCount;
 	private int currentPage;
 	private TextWidthImpl textWidth;
-	private int maxLineCount;
 	private int lineHeight;
 	private String title;
 
@@ -90,8 +89,7 @@ public class PageView extends View {
 		}
 
 		if (splitPages) {
-			int dy = (maxLineCount / 2 + 1) * lineHeight
-					+ (int) (lineHeight * 0.5);
+			int dy = getHeight() - (int) (lineHeight * 0.3);
 			String pc = (currentPage * 2 - 1) + "/" + (pageCount * 2);
 			char[] text = pc.toCharArray();
 			int w = textWidth.getWidth(text, 0, pc.length());
@@ -102,17 +100,17 @@ public class PageView extends View {
 			text = pc.toCharArray();
 			w = textWidth.getWidth(text, 0, pc.length());
 			textPaint.setColor(Color.GRAY);
-			canvas.drawText(text, 0, pc.length(), (int) (getWidth() * 0.98) - w,
-					dy, textPaint);
+			canvas.drawText(text, 0, pc.length(),
+					(int) (getWidth() * 0.98) - w, dy, textPaint);
 			canvas.drawText(title, (int) (getWidth() * 0.02), dy, textPaint);
 		} else {
-			int dy = (maxLineCount + 1) * lineHeight + (int) (lineHeight * 0.5);
+			int dy = getHeight() - (int) (lineHeight * 0.3);
 			String pc = currentPage + "/" + pageCount;
 			char[] text = pc.toCharArray();
 			int w = textWidth.getWidth(text, 0, pc.length());
 			textPaint.setColor(Color.GRAY);
-			canvas.drawText(text, 0, pc.length(), (int) (getWidth() * 0.98) - w,
-					dy, textPaint);
+			canvas.drawText(text, 0, pc.length(),
+					(int) (getWidth() * 0.98) - w, dy, textPaint);
 			canvas.drawText(title, (int) (getWidth() * 0.02), dy, textPaint);
 		}
 	}
@@ -125,7 +123,6 @@ public class PageView extends View {
 		this.currentPage = page2;
 		this.pageCount = pageCount;
 		this.splitPages = splitPages;
-		this.maxLineCount = page.getMaxLineCount();
 		this.lineHeight = lineHeight;
 		clearSelection();
 		this.textPaint = textWidth.getTextPaint();
@@ -369,8 +366,8 @@ public class PageView extends View {
 		String lcWord;
 	}
 
-	public void setColor(String text, String color) {
-		ts.markColor(text, color);
+	public void markWord(String text) {
+		ts.markWord(text);
 	}
 
 	public void clearSelection() {
@@ -381,7 +378,7 @@ public class PageView extends View {
 	public TextOnScreen select(int x1, int y1, int x2, int y2, int x, int y) {
 		startSelection = -1;
 		endSelection = -1;
-		if(words==null)
+		if (words == null)
 			return null;
 		for (int i = words.size() - 1; i >= 0; i--) {
 			if (words.get(i).rect.contains(x1, y1))

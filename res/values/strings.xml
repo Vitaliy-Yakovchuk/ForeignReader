@@ -22,5 +22,8 @@
     <string name="send_to">Share text to&#8230;</string>
     <string name="title_activity_view_settings">View Settings</string>
     <string name="known_words">My Dictionary</string>
+    <string name="mark_word_as_knows">Mark this word as known</string>
+    <string name="change_word_status">!</string>
+    <string name="know_all_ather_words">OK</string>
 
 </resources>

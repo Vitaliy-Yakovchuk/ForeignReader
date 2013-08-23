@@ -32,9 +32,7 @@ import com.foreignreader.cache.SectionCacheHelper;
 import com.foreignreader.textimpl.TextWidthImpl;
 import com.foreignreader.util.FastTranslator;
 import com.foreignreader.util.SystemUiHider;
-import com.foreignreader.R;
 import com.reader.common.BookMetadata;
-import com.reader.common.ColorConstants;
 import com.reader.common.ObjectsFactory;
 import com.reader.common.book.Book;
 import com.reader.common.book.BookLoader;
@@ -69,11 +67,7 @@ public class ReaderActivity extends Activity {
 
 	private Button mark;
 
-	private Button yellow;
-
-	private Button blue;
-
-	private Button white;
+	private Button markWord;
 
 	private GestureDetector gestureScanner;
 
@@ -223,9 +217,7 @@ public class ReaderActivity extends Activity {
 		final View controlsView = findViewById(R.id.fullscreen_controls);
 
 		mark = (Button) findViewById(R.id.markAllAsKnown);
-		yellow = (Button) findViewById(R.id.yellowButton);
-		blue = (Button) findViewById(R.id.blueButton);
-		white = (Button) findViewById(R.id.whiteButton);
+		markWord = (Button) findViewById(R.id.markWordButton);
 		fastTranslation = (TextView) findViewById(R.id.translationText);
 		fastTranslation.setBackgroundColor(Color.WHITE);
 		seekPageBar = (SeekBar) findViewById(R.id.seekPageBar);
@@ -315,9 +307,7 @@ public class ReaderActivity extends Activity {
 		});
 
 		{
-			yellow.setEnabled(false);
-			white.setEnabled(false);
-			blue.setEnabled(false);
+			markWord.setEnabled(false);
 		}
 
 		mark.setOnClickListener(new View.OnClickListener() {
@@ -328,27 +318,11 @@ public class ReaderActivity extends Activity {
 			}
 		});
 
-		yellow.setOnClickListener(new View.OnClickListener() {
+		markWord.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				markColor(ColorConstants.YELLOW);
-			}
-		});
-
-		white.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				markColor(ColorConstants.WHITE);
-			}
-		});
-
-		blue.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				markColor(ColorConstants.BLUE);
+				markWord();
 			}
 		});
 
@@ -422,8 +396,8 @@ public class ReaderActivity extends Activity {
 
 	}
 
-	protected void markColor(String color) {
-		contentView.setColor(selectedText.text, color);
+	protected void markWord() {
+		contentView.markWord(selectedText.text);
 		contentView.clearSelection();
 		fastTranslation.setText("");
 		contentView.invalidate();
@@ -453,19 +427,15 @@ public class ReaderActivity extends Activity {
 
 	private void updateTextMarkButtons(boolean contain) {
 		if (!contain) {
-			if (blue.isEnabled()) {
-				blue.setEnabled(false);
-				yellow.setEnabled(false);
-				white.setEnabled(false);
+			if (markWord.isEnabled()) {
+				markWord.setEnabled(false);
 				sendButton.setEnabled(false);
 				if (translationEnable)
 					translateButton.setEnabled(false);
 			}
 		} else {
-			if (!blue.isEnabled()) {
-				blue.setEnabled(true);
-				yellow.setEnabled(true);
-				white.setEnabled(true);
+			if (!markWord.isEnabled()) {
+				markWord.setEnabled(true);
 				sendButton.setEnabled(true);
 				if (translationEnable)
 					translateButton.setEnabled(true);
@@ -683,9 +653,9 @@ public class ReaderActivity extends Activity {
 
 		textWidth = new TextWidthImpl(paint);
 
-		screenHeight -= fastTranslation.getHeight();
+		screenHeight -= fastTranslation.getHeight() + (int) (lineHeight * 0.3);
 
-		int maxLineCount = screenHeight / lineHeight;
+		int maxLineCount = screenHeight / lineHeight-1;
 
 		if (splitPages) {
 			maxLineCount *= 2;
