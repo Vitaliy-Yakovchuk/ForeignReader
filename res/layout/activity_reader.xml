@@ -32,17 +32,6 @@
                 android:layout_alignTop="@+id/markWordButton"
                 android:background="#ffffff" />
 
-            <TextView
-                android:id="@+id/translationText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/whiteBackground"
-                android:layout_alignTop="@+id/selectChapterButton"
-                android:layout_toLeftOf="@+id/selectChapterButton"
-                android:layout_toRightOf="@+id/sendButton"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000" />
-
             <Button
                 android:id="@+id/markWordButton"
                 android:layout_width="wrap_content"
@@ -90,15 +79,6 @@
                 android:text="Chapter"
                 android:textColor="#000000" />
 
-            <SeekBar
-                android:id="@+id/seekPageBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/translationText"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/showPageText"
-                android:visibility="visible" />
-
             <TextView
                 android:id="@+id/showPageText"
                 android:layout_width="wrap_content"
@@ -118,6 +98,25 @@
                 android:layout_alignParentRight="true"
                 android:text="@string/know_all_ather_words"
                 android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/translationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignTop="@+id/whiteBackground"
+                android:layout_toLeftOf="@+id/selectChapterButton"
+                android:layout_toRightOf="@+id/sendButton"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
+
+            <SeekBar
+                android:id="@+id/seekPageBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/whiteBackground"
+                android:layout_toLeftOf="@+id/showPageText"
+                android:visibility="visible" />
 
         </RelativeLayout>
     </FrameLayout>
