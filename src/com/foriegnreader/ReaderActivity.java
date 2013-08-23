@@ -25,6 +25,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.foriegnreader.cache.SectionCacheHelper;
@@ -111,6 +112,10 @@ public class ReaderActivity extends Activity {
 	private FastTranslator fastTranslator;
 
 	private TextView fastTranslation;
+
+	private TextView pageNumber;
+
+	private SeekBar seekPageBar;
 
 	private long downTime = -1;
 
@@ -221,6 +226,47 @@ public class ReaderActivity extends Activity {
 		white = (Button) findViewById(R.id.whiteButton);
 		fastTranslation = (TextView) findViewById(R.id.translationText);
 		fastTranslation.setBackgroundColor(Color.WHITE);
+		seekPageBar = (SeekBar) findViewById(R.id.seekPageBar);
+
+		seekPageBar
+				.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+					private int i;
+
+					@Override
+					public void onStopTrackingTouch(SeekBar seekBar) {
+						section.setCurrentPage(i);
+						loadPage(i + 1);
+						updateNextPrevEnable();
+						hideControls();
+					}
+
+					@Override
+					public void onStartTrackingTouch(SeekBar seekBar) {
+					}
+
+					@Override
+					public void onProgressChanged(SeekBar seekBar,
+							int progress, boolean fromUser) {
+						i = progress;
+						pageNumber.setText(Integer.toString(progress + 1));
+					}
+				});
+
+		pageNumber = (TextView) findViewById(R.id.showPageText);
+		((Button) findViewById(R.id.selectPageButton))
+				.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						seekPageBar.setProgress(section.getCurrentPage());
+						seekPageBar.setMax(section.getPageCount() - 1);
+						pageNumber.setText(Integer.toString(section
+								.getCurrentPage() + 1));
+						pageNumber.setVisibility(View.VISIBLE);
+						seekPageBar.setVisibility(View.VISIBLE);
+					}
+				});
 
 		((Button) findViewById(R.id.selectChapterButton))
 				.setOnClickListener(new View.OnClickListener() {
@@ -465,6 +511,19 @@ public class ReaderActivity extends Activity {
 			next = false;
 	}
 
+	private void updateNextPrevEnable() {
+		int p = section.getCurrentPage();
+		if (p + 1 == section.getPageCount()
+				&& currentSection + 1 == sectionCount)
+			next = false;
+		else
+			next = true;
+		if (p == 0 && currentSection == 0)
+			prev = false;
+		else
+			prev = true;
+	}
+
 	private void loadPage(int page) {
 		contentView
 				.setText(section.getPage(), (TextWidthImpl) textWidth,
@@ -479,6 +538,10 @@ public class ReaderActivity extends Activity {
 
 	private void hideControls() {
 		mSystemUiHider.hide();
+		if (pageNumber.getVisibility() == View.VISIBLE) {
+			pageNumber.setVisibility(View.INVISIBLE);
+			seekPageBar.setVisibility(View.INVISIBLE);
+		}
 	}
 
 	private void loadText() {

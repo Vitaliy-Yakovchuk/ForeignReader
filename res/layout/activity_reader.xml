@@ -50,15 +50,6 @@
                 android:textColor="#000000" />
 
             <Button
-                android:id="@+id/selectChapterButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:text="Chapter"
-                android:textColor="#000000" />
-
-            <Button
                 android:id="@+id/markAllAsKnown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,9 +85,45 @@
                 android:layout_alignTop="@+id/yellowButton"
                 android:layout_toLeftOf="@+id/yellowButton"
                 android:layout_toRightOf="@+id/sendButton"
-                android:text=""
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/selectPageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="Page"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/selectChapterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/selectPageButton"
+                android:text="Chapter"
+                android:textColor="#000000" />
+
+            <SeekBar
+                android:id="@+id/seekPageBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/blueButton"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/showPageText"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/showPageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/seekPageBar"
+                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="invisible" />
 
         </RelativeLayout>
     </FrameLayout>
