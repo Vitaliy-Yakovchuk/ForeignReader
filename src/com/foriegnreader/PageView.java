@@ -91,29 +91,29 @@ public class PageView extends View {
 
 		if (splitPages) {
 			int dy = (maxLineCount / 2 + 1) * lineHeight
-					+ (int) (lineHeight * 0.3);
+					+ (int) (lineHeight * 0.5);
 			String pc = (currentPage * 2 - 1) + "/" + (pageCount * 2);
 			char[] text = pc.toCharArray();
 			int w = textWidth.getWidth(text, 0, pc.length());
 			textPaint.setColor(Color.GRAY);
 			canvas.drawText(text, 0, pc.length(), getWidth() / 2 - w
-					- (int) (getWidth() * 0.1), dy, textPaint);
+					- (int) (getWidth() * 0.02), dy, textPaint);
 			pc = (currentPage * 2) + "/" + (pageCount * 2);
 			text = pc.toCharArray();
 			w = textWidth.getWidth(text, 0, pc.length());
 			textPaint.setColor(Color.GRAY);
-			canvas.drawText(text, 0, pc.length(), (int) (getWidth() * 0.9) - w,
+			canvas.drawText(text, 0, pc.length(), (int) (getWidth() * 0.98) - w,
 					dy, textPaint);
-			canvas.drawText(title, (int) (getWidth() * 0.1), dy, textPaint);
+			canvas.drawText(title, (int) (getWidth() * 0.02), dy, textPaint);
 		} else {
-			int dy = (maxLineCount + 1) * lineHeight + (int) (lineHeight * 0.3);
+			int dy = (maxLineCount + 1) * lineHeight + (int) (lineHeight * 0.5);
 			String pc = currentPage + "/" + pageCount;
 			char[] text = pc.toCharArray();
 			int w = textWidth.getWidth(text, 0, pc.length());
 			textPaint.setColor(Color.GRAY);
-			canvas.drawText(text, 0, pc.length(), (int) (getWidth() * 0.9) - w,
+			canvas.drawText(text, 0, pc.length(), (int) (getWidth() * 0.98) - w,
 					dy, textPaint);
-			canvas.drawText(title, (int) (getWidth() * 0.1), dy, textPaint);
+			canvas.drawText(title, (int) (getWidth() * 0.02), dy, textPaint);
 		}
 	}
 
