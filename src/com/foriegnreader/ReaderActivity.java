@@ -39,6 +39,7 @@ import com.reader.common.book.Book;
 import com.reader.common.book.BookLoader;
 import com.reader.common.book.SectionMetadata;
 import com.reader.common.impl.SectionImpl;
+import com.reader.common.impl.SimpleTextWithSymbolsParser;
 import com.reader.common.pages.Section;
 
 public class ReaderActivity extends Activity {
@@ -526,10 +527,34 @@ public class ReaderActivity extends Activity {
 	}
 
 	private void loadPage(int page) {
-		contentView
-				.setText(section.getPage(), (TextWidthImpl) textWidth,
-						lineHeight, lineWidth, splitPages, page,
-						section.getPageCount());
+		String chapter = section.getSection().getTitle();
+		if (chapter == null)
+			chapter = "";
+		else {
+			final StringBuilder b = new StringBuilder();
+
+			SimpleTextWithSymbolsParser p = new SimpleTextWithSymbolsParser() {
+
+				int l;
+
+				@Override
+				public void processWord(char[] txt, int start, int len) {
+					l += len;
+					if (l > 35)
+						return;
+
+					b.append(txt, start, len);
+					b.append(' ');
+				}
+			};
+
+			p.parse(chapter.toCharArray());
+
+			chapter = b.toString();
+		}
+		contentView.setText(section.getPage(), (TextWidthImpl) textWidth,
+				lineHeight, lineWidth, splitPages, page,
+				section.getPageCount(), chapter);
 		contentView.invalidate();
 		updateTextMarkButtons(false);
 		if (mSystemUiHider.isVisible()) {
@@ -657,8 +682,10 @@ public class ReaderActivity extends Activity {
 
 		textWidth = new TextWidthImpl(paint);
 
-		int maxLineCount = screenHeight / lineHeight - 1;// last row is system
-		// bar
+		screenHeight -= fastTranslation.getHeight();
+
+		int maxLineCount = screenHeight / lineHeight;
+
 		if (splitPages) {
 			maxLineCount *= 2;
 			screenWidth = (int) (screenWidth * 0.46);
