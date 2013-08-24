@@ -41,7 +41,8 @@
         android:layout_below="@+id/word_detail"
         android:ellipsize="none"
         android:scrollHorizontally="false"
-        android:text="" />
+        android:text=""
+        android:textSize="@dimen/dictional_font_size" />
 
     <Button
         android:id="@+id/markWordAsKnowButton"

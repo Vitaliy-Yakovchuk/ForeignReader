@@ -2,6 +2,7 @@ package com.foreignreader.util;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 
 import com.foreignreader.TranslationHelper;
 import com.reader.common.ObjectsFactory;
@@ -52,9 +53,28 @@ public class LongTranslationHelper {
 				.getSentences(text);
 		if (sentences != null) {
 			for (Sentence sentence : sentences) {
-				builder.append(sentence.text);
+				int off = builder.length();
+				String text2 = sentence.text;
+				while (text2.startsWith("\""))
+					text2 = text2.substring(1);
+
+				builder.append(text2);
 				builder.append('\n');
 				builder.append('\n');
+
+				String lowerCase = text2.toLowerCase(Locale.getDefault());
+				String w = text.toLowerCase(Locale.getDefault());
+				int index = 0;
+				do {
+					index = lowerCase.indexOf(w, index);
+					if (index < 0)
+						break;
+					builder.setSpan(new StyleSpan(
+							android.graphics.Typeface.BOLD), off + index, off
+							+ index + w.length(), 0);
+					index += w.length();
+				} while (true);
+
 			}
 		}
 	}
