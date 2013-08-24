@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.foreignreader.R;
@@ -23,7 +23,12 @@ import com.lamerman.FileDialog;
 import com.lamerman.SelectionMode;
 import com.reader.common.BookMetadata;
 import com.reader.common.BooksDatabase;
+import com.reader.common.Database;
 import com.reader.common.ObjectsFactory;
+import com.reader.common.book.Book;
+import com.reader.common.book.BookLoader;
+import com.reader.common.book.Sentence;
+import com.reader.common.book.SentenceParserCallback;
 
 public class BooksActivity extends Activity {
 
@@ -33,11 +38,11 @@ public class BooksActivity extends Activity {
 
 	private static final int REQUEST_OPEN_VIEW_SETTING = 2;
 
-	private ArrayAdapter<BookMetadata> adapter;
+	private BookFileAdapter adapter;
 
-	private List<BookMetadata> files;
+	private List<BookMetadata> bookFiles;
 
-	public final static boolean TESTING_STORGE = false;// false;
+	public final static boolean TESTING_STORGE = true;// false;
 
 	private BooksDatabase booksDatabase;
 
@@ -63,17 +68,51 @@ public class BooksActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView parentView, View childView,
 					int position, long id) {
-				openBook(files.get(position));
+				loadBook(bookFiles.get(position));
 			}
 		});
 
 		booksDatabase = ObjectsFactory.getDefaultBooksDatabase();
 
-		files = booksDatabase.getBooks();
+		bookFiles = booksDatabase.getBooks();
 
-		adapter = new ArrayAdapter<BookMetadata>(this,
-				android.R.layout.simple_list_item_1, files);
+		adapter = new BookFileAdapter(this, R.layout.book_item, bookFiles);
 		books.setAdapter(adapter);
+	}
+
+	public void removeBook(View view) {
+		BookMetadata bm = (BookMetadata) view.getTag();
+		booksDatabase.removeBook(bm);
+		adapter.remove(bm);
+		adapter.notifyDataSetChanged();
+	}
+
+	public void openBook(View view) {
+		loadBook((BookMetadata) view.getTag());
+	}
+
+	public void scanBook(View view) {
+		final BookMetadata bm = (BookMetadata) view.getTag();
+		Book book;
+		try {
+			book = BookLoader.loadBook(new File(bm.getFileName()));
+			book.scanForSentences(new SentenceParserCallback() {
+
+				Database database = ObjectsFactory.getDefaultDatabase();
+
+				@Override
+				public boolean found(Sentence sentence) {
+					database.addSentence(sentence.text, bm.getName(),
+							sentence.section, -1);
+					return false;
+				}
+			});
+		} catch (Exception e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(e.getLocalizedMessage());
+			builder.create().show();
+		}
+
 	}
 
 	protected void openViewSettingActivity() {
@@ -87,7 +126,7 @@ public class BooksActivity extends Activity {
 
 	}
 
-	protected void openBook(BookMetadata filebook) {
+	protected void loadBook(BookMetadata filebook) {
 		Intent intent = new Intent(getBaseContext(), ReaderActivity.class);
 		intent.putExtra(ReaderActivity.FILE, filebook.getFileName());
 

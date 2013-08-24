@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight" >
+
+    <TextView
+        android:id="@+id/bookFileTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/removeBookButton"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/scanBookButton"
+        android:layout_toRightOf="@+id/openBookButton"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/removeBookButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="removeBook"
+        android:text="Remove" />
+
+    <Button
+        android:id="@+id/openBookButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:onClick="openBook"
+        android:text="Open" />
+
+    <Button
+        android:id="@+id/scanBookButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/removeBookButton"
+        android:onClick="scanBook"
+        android:text="Scan" />
+
+</RelativeLayout>

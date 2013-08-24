@@ -4,13 +4,14 @@ import java.io.File;
 import java.util.List;
 
 import com.foreignreader.TranslationHelper;
+import com.reader.common.ObjectsFactory;
+import com.reader.common.book.Sentence;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
-
 import android.os.Environment;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -45,6 +46,17 @@ public class LongTranslationHelper {
 		add(dict.getIndexWord(text, POS.VERB), "Verb\n", builder);
 		add(dict.getIndexWord(text, POS.ADJECTIVE), "Adjective\n", builder);
 		add(dict.getIndexWord(text, POS.ADVERB), "Adverb\n", builder);
+		builder.append('\n');
+
+		List<Sentence> sentences = ObjectsFactory.getDefaultDatabase()
+				.getSentences(text);
+		if (sentences != null) {
+			for (Sentence sentence : sentences) {
+				builder.append(sentence.text);
+				builder.append('\n');
+				builder.append('\n');
+			}
+		}
 	}
 
 	private void add(IIndexWord idxWord, String section,

@@ -37,7 +37,7 @@ public class PageView extends View {
 	private int endSelection = -1;
 	private boolean splitPages;
 
-	private int gr0 = Color.parseColor("#0F0F0F");
+	private int gr0 = Color.parseColor("#A0A0A0");
 	private int[] gr = new int[6];
 
 	private Runnable loadPage;
