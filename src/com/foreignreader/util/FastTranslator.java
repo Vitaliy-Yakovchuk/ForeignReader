@@ -32,7 +32,7 @@ public class FastTranslator {
 				.toLowerCase(Locale.getDefault())));
 		if (t == null)
 			return null;
-		return TranslationHelper.normilize(t);
+		return TranslationHelper.normilizeA(t);
 	}
 	
 	public String getNotNornalizedMeaning(String word) {

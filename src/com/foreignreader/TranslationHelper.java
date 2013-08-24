@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.foreignreader.R;
 import com.reader.common.impl.SimpleTextParser;
+import com.reader.common.impl.SimpleTextWithSymbolsParser;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -32,6 +33,27 @@ public class TranslationHelper {
 		final StringBuffer text = new StringBuffer();
 
 		SimpleTextParser parser = new SimpleTextParser() {
+
+			boolean first = true;
+
+			@Override
+			public void processWord(char[] textCharArray, int start, int len) {
+				if (first)
+					first = false;
+				else
+					text.append(' ');
+
+				text.append(textCharArray, start, len);
+			}
+		};
+		parser.parse(t.toCharArray());
+		return text.toString();
+	}
+
+	public static String normilizeA(String t) {
+		final StringBuffer text = new StringBuffer();
+
+		SimpleTextWithSymbolsParser parser = new SimpleTextWithSymbolsParser() {
 
 			boolean first = true;
 

@@ -1,10 +1,14 @@
 package com.foreignreader;
 
+import java.io.File;
+
 import com.foreignreader.util.LongTranslationHelper;
 import com.foreignreader.R;
+import com.reader.common.ObjectsFactory;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 
 /**
@@ -35,6 +39,16 @@ public class WordListActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_word_list);
+
+		if (BooksActivity.TESTING_STORGE)
+			ObjectsFactory.storageFile = new File(getFilesDir(), "words.db");
+		else {
+			File file = new File(Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_PICTURES).getParentFile(),
+					"Foreign Reader");
+			file.mkdirs();
+			ObjectsFactory.storageFile = new File(file, "words.db");
+		}
 
 		if (findViewById(R.id.word_detail_container) != null) {
 			// The detail container view will be present only in the

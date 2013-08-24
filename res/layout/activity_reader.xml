@@ -33,25 +33,6 @@
                 android:background="#ffffff" />
 
             <Button
-                android:id="@+id/markWordButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:text="@string/change_word_status"
-                android:textColor="#000000" />
-
-            <Button
-                android:id="@+id/translateButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginLeft="17dp"
-                android:layout_toRightOf="@+id/markWordButton"
-                android:text="Translate"
-                android:textColor="#000000" />
-
-            <Button
                 android:id="@+id/sendButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,17 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="17dp"
-                android:layout_toLeftOf="@+id/markAllAsKnown"
+                android:layout_toLeftOf="@+id/markWordButton"
                 android:text="Page"
-                android:textColor="#000000" />
-
-            <Button
-                android:id="@+id/selectChapterButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/selectPageButton"
-                android:text="Chapter"
                 android:textColor="#000000" />
 
             <TextView
@@ -117,6 +89,34 @@
                 android:layout_above="@+id/whiteBackground"
                 android:layout_toLeftOf="@+id/showPageText"
                 android:visibility="visible" />
+
+            <Button
+                android:id="@+id/translateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="30dp"
+                android:text="Translate"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/selectChapterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/selectPageButton"
+                android:text="Chapter"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/markWordButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/markAllAsKnown"
+                android:text="@string/change_word_status"
+                android:textColor="#000000" />
 
         </RelativeLayout>
     </FrameLayout>
