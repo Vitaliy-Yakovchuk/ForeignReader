@@ -535,7 +535,7 @@ public class ReaderActivity extends Activity {
 
 			p.parse(chapter.toCharArray());
 
-			chapter = b.toString();
+			chapter = b.toString().trim();
 		}
 		contentView.setText(section.getPage(), (TextWidthImpl) textWidth,
 				lineHeight, lineWidth, splitPages, page,
