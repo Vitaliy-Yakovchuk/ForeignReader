@@ -37,7 +37,7 @@ public class PageView extends View {
 	private int endSelection = -1;
 	private boolean splitPages;
 
-	private int gr0 = Color.parseColor("#A0A0A0");
+	private int gr0 = Color.parseColor("#0F0F0F");
 	private int[] gr = new int[6];
 
 	private Runnable loadPage;
@@ -213,6 +213,14 @@ public class PageView extends View {
 					}
 				}
 
+				while (word.start + word.length2 < word.text.length) {
+					char c = word.text[word.start + word.length2];
+					if (Character.isSpaceChar(c)
+							|| SimpleTextParser.isTextPart(c))
+						break;
+					word.length2++;
+				}
+
 				word.rect.bottom = (int) (lineHeight * 0.2);
 				word.rect.top = (int) (-lineHeight * 0.6);
 
@@ -231,7 +239,7 @@ public class PageView extends View {
 			@Override
 			public void end() {
 				line++;
-				fillLine(true);
+				fillLine(page.end[line - 1]);
 			}
 
 			private void fillLine(boolean end) {
