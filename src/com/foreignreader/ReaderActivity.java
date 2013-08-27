@@ -545,6 +545,7 @@ public class ReaderActivity extends Activity {
 		if (mSystemUiHider.isVisible()) {
 			hideControls();
 		}
+		updateNextPrevEnable();
 	}
 
 	private void hideControls() {
