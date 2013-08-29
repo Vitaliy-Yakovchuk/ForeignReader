@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
+import android.widget.TextView;
 
 /**
  * An activity representing a list of Words. This activity has different
@@ -40,6 +41,8 @@ public class WordListActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_word_list);
 
+		TextView stat = (TextView) findViewById(R.id.statisticTextView);
+
 		if (BooksActivity.TESTING_STORGE)
 			ObjectsFactory.storageFile = new File(getFilesDir(), "words.db");
 		else {
@@ -49,6 +52,10 @@ public class WordListActivity extends FragmentActivity implements
 			file.mkdirs();
 			ObjectsFactory.storageFile = new File(file, "words.db");
 		}
+
+		int[] n = ObjectsFactory.getDefaultDatabase().getWordsCount();
+
+		stat.setText("Known words: " + n[0] + "   Unknown words: " + n[1]);
 
 		if (findViewById(R.id.word_detail_container) != null) {
 			// The detail container view will be present only in the
