@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentNavigableMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
-import com.foreignreader.TranslationHelper;
 
 import android.os.Environment;
 

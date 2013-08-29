@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-import com.foreignreader.TranslationHelper;
 import com.reader.common.ObjectsFactory;
 import com.reader.common.book.Sentence;
 

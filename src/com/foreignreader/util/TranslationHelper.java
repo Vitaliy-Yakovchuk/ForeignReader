@@ -1,8 +1,9 @@
-package com.foreignreader;
+package com.foreignreader.util;
 
 import java.util.List;
 
 import com.foreignreader.R;
+import com.foreignreader.TextOnScreen;
 import com.reader.common.impl.SimpleTextParser;
 import com.reader.common.impl.SimpleTextWithSymbolsParser;
 

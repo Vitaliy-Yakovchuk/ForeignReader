@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.foreignreader.util.LongTranslationHelper;
+import com.foreignreader.util.TranslationHelper;
 import com.foreignreader.words.WordsContent;
 import com.foreignreader.R;
 import com.reader.common.ColorConstants;

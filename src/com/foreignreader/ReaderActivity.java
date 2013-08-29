@@ -33,6 +33,7 @@ import com.foreignreader.cache.SectionCacheHelper;
 import com.foreignreader.textimpl.TextWidthImpl;
 import com.foreignreader.util.FastTranslator;
 import com.foreignreader.util.SystemUiHider;
+import com.foreignreader.util.TranslationHelper;
 import com.reader.common.BookMetadata;
 import com.reader.common.ObjectsFactory;
 import com.reader.common.book.Book;
