@@ -1,0 +1,130 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    tools:context=".ReaderActivity" >
+
+    <com.foreignreader.PageView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true" >
+
+        <RelativeLayout
+            android:id="@+id/fullscreen_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <RelativeLayout
+                android:id="@+id/whiteBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/markWordButton"
+                android:background="#ffffff" />
+
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/translateButton"
+                android:text="Send"
+                android:textColor="#000000"
+                android:textSize="28dp" />
+
+            <Button
+                android:id="@+id/selectPageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="17dp"
+                android:layout_toLeftOf="@+id/markWordButton"
+                android:text="Page"
+                android:textColor="#000000"
+                android:textSize="28dp" />
+
+            <TextView
+                android:id="@+id/showPageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/seekPageBar"
+                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/markAllAsKnown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/know_all_ather_words"
+                android:textColor="#000000"
+                android:textSize="28dp" />
+
+            <TextView
+                android:id="@+id/translationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignTop="@+id/whiteBackground"
+                android:layout_toLeftOf="@+id/selectChapterButton"
+                android:layout_toRightOf="@+id/sendButton"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
+
+            <SeekBar
+                android:id="@+id/seekPageBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/whiteBackground"
+                android:layout_toLeftOf="@+id/showPageText"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/translateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="30dp"
+                android:text="Translate"
+                android:textColor="#000000"
+                android:textSize="28dp" />
+
+            <Button
+                android:id="@+id/selectChapterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/selectPageButton"
+                android:text="Chapter"
+                android:textColor="#000000"
+                android:textSize="28dp" />
+
+            <Button
+                android:id="@+id/markWordButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/markAllAsKnown"
+                android:text="@string/change_word_status"
+                android:textColor="#000000"
+                android:textSize="28dp" />
+
+        </RelativeLayout>
+    </FrameLayout>
+
+</RelativeLayout>
