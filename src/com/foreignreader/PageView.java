@@ -47,6 +47,7 @@ public class PageView extends View {
 	private int lineHeight;
 	private String title;
 	private int bkColor = Color.WHITE;
+	private int fkColor = Color.BLACK;
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -94,7 +95,7 @@ public class PageView extends View {
 					canvas.drawRect(word.rect, textPaint);
 			}
 
-			textPaint.setColor(Color.BLACK);
+			textPaint.setColor(fkColor);
 			canvas.drawText(word.text, word.start, word.length2, word.x,
 					word.y, textPaint);
 		}
@@ -450,5 +451,9 @@ public class PageView extends View {
 	@Override
 	public void setBackgroundColor(int color) {
 		this.bkColor = color;
+	}
+
+	public void setForegroundColor(int foreground) {
+		this.fkColor = foreground;
 	}
 }

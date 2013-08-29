@@ -18,16 +18,6 @@
         android:max="80"
         android:progress="20" />
 
-    <TextView
-        android:id="@+id/prLabal2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/fontSizeBar"
-        android:layout_marginTop="20dp"
-        android:text="Font family:"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
@@ -40,7 +30,7 @@
         <RadioGroup
             android:id="@+id/font_chooser_group"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" >
         </RadioGroup>
     </ScrollView>
 
@@ -48,9 +38,17 @@
         android:id="@+id/prLabal1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/fontSizeBar"
         android:layout_alignParentTop="true"
         android:text="Font size:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/prLabal2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/scrollView1"
+        android:layout_below="@+id/font_size_bar"
+        android:text="Font family:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

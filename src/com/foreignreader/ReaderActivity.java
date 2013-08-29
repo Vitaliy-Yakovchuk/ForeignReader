@@ -123,6 +123,8 @@ public class ReaderActivity extends Activity {
 	private float downX;
 
 	private int background;
+	
+	private int foreground;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +155,8 @@ public class ReaderActivity extends Activity {
 		fontName = preferences.getString("font_family", "serif");
 
 		background = preferences.getInt("reader_bk_color", Color.WHITE);
+		
+		foreground = preferences.getInt("reader_fk_color", Color.BLACK);
 
 		sectionCacheHelper = new SectionCacheHelper(this);
 
@@ -233,6 +237,8 @@ public class ReaderActivity extends Activity {
 		contentView = (PageView) findViewById(R.id.fullscreen_content);
 
 		contentView.setBackgroundColor(background);
+		
+		contentView.setForegroundColor(foreground);
 
 		final View controlsView = findViewById(R.id.fullscreen_controls);
 
@@ -583,8 +589,8 @@ public class ReaderActivity extends Activity {
 		super.onConfigurationChanged(newConfig);
 		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			landscape = true;
-			SharedPreferences preferences = getSharedPreferences(
-					ViewSettings.VIEW_PREF, 0);
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(getBaseContext());
 			splitPages = preferences.getBoolean("split_on_landscape", true);
 		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 			landscape = false;

@@ -39,6 +39,18 @@ public class WordListActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if (BooksActivity.TESTING_STORGE)
+			ObjectsFactory.storageFile = new File(getFilesDir(), "words.db");
+		else {
+			File file = new File(Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_PICTURES).getParentFile(),
+					"Foreign Reader");
+			file.mkdirs();
+			ObjectsFactory.storageFile = new File(file, "words.db");
+		}
+
+		
 		setContentView(R.layout.activity_word_list);
 
 		TextView stat = (TextView) findViewById(R.id.statisticTextView);

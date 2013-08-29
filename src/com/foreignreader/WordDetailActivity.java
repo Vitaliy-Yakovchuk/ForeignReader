@@ -1,9 +1,13 @@
 package com.foreignreader;
 
+import java.io.File;
+
 import com.foreignreader.R;
+import com.reader.common.ObjectsFactory;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
@@ -21,6 +25,17 @@ public class WordDetailActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (BooksActivity.TESTING_STORGE)
+			ObjectsFactory.storageFile = new File(getFilesDir(), "words.db");
+		else {
+			File file = new File(Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_PICTURES).getParentFile(),
+					"Foreign Reader");
+			file.mkdirs();
+			ObjectsFactory.storageFile = new File(file, "words.db");
+		}
+
 		setContentView(R.layout.activity_word_detail);
 
 		// Show the Up button in the action bar.
