@@ -37,6 +37,8 @@ public class BooksActivity extends Activity {
 	private static final int REQUEST_OPEN_WORDS = 1;
 
 	private static final int REQUEST_OPEN_VIEW_SETTING = 2;
+	
+	private static final int REQUEST_OPEN_SETTING = 3;
 
 	private BookFileAdapter adapter;
 
@@ -119,6 +121,11 @@ public class BooksActivity extends Activity {
 		Intent intent = new Intent(getBaseContext(), ViewSettings.class);
 		startActivityForResult(intent, REQUEST_OPEN_VIEW_SETTING);
 	}
+	
+	protected void openSettingActivity() {
+		Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
+		startActivityForResult(intent, REQUEST_OPEN_SETTING);
+	}
 
 	protected void openWordsActivity() {
 		Intent intent = new Intent(getBaseContext(), WordListActivity.class);
@@ -197,6 +204,9 @@ public class BooksActivity extends Activity {
 			return true;
 		case R.id.action_settings:
 			openViewSettingActivity();
+			return true;
+		case R.id.action_settings2:
+			openSettingActivity();
 			return true;
 		case R.id.known_words:
 			openWordsActivity();

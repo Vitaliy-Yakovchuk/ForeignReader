@@ -18,6 +18,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
@@ -121,6 +122,8 @@ public class ReaderActivity extends Activity {
 
 	private float downX;
 
+	private int background;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -135,13 +138,12 @@ public class ReaderActivity extends Activity {
 			ObjectsFactory.storageFile = new File(file, "words.db");
 		}
 
-		
 		landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
 		fastTranslator = new FastTranslator();
 
-		SharedPreferences preferences = getSharedPreferences(
-				ViewSettings.VIEW_PREF, 0);
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getBaseContext());
 
 		splitPages = landscape
 				&& preferences.getBoolean("split_on_landscape", true);
@@ -149,6 +151,8 @@ public class ReaderActivity extends Activity {
 		fontSize = preferences.getInt("font_size", 30);
 
 		fontName = preferences.getString("font_family", "serif");
+
+		background = preferences.getInt("reader_bk_color", Color.WHITE);
 
 		sectionCacheHelper = new SectionCacheHelper(this);
 
@@ -227,6 +231,9 @@ public class ReaderActivity extends Activity {
 		setContentView(R.layout.activity_reader);
 
 		contentView = (PageView) findViewById(R.id.fullscreen_content);
+
+		contentView.setBackgroundColor(background);
+
 		final View controlsView = findViewById(R.id.fullscreen_controls);
 
 		mark = (Button) findViewById(R.id.markAllAsKnown);

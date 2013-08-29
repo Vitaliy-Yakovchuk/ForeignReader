@@ -8,27 +8,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ViewSettings" >
 
-    <CheckBox
-        android:id="@+id/splitOnLandscapeCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:checked="true"
-        android:text="Split pages on landscape" />
-
-    <TextView
-        android:id="@+id/prLabal1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/splitOnLandscapeCheckBox"
-        android:layout_marginTop="18dp"
-        android:text="Font size:"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
     <SeekBar
-        android:id="@+id/fontSizeBar"
+        android:id="@+id/font_size_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -44,7 +25,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/fontSizeBar"
         android:layout_marginTop="20dp"
-        android:text="Font famely:"
+        android:text="Font family:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ScrollView
@@ -57,10 +38,19 @@
         android:layout_below="@+id/prLabal2" >
 
         <RadioGroup
-            android:id="@+id/fontChooserGroup"
+            android:id="@+id/font_chooser_group"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
         </RadioGroup>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/prLabal1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/fontSizeBar"
+        android:layout_alignParentTop="true"
+        android:text="Font size:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

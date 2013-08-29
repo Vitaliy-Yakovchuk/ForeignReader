@@ -53,6 +53,10 @@
             android:name="com.foreignreader.ViewSettings"
             android:label="@string/title_activity_view_settings" >
         </activity>
+        <activity
+            android:name="com.foreignreader.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

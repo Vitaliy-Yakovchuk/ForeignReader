@@ -1,0 +1,28 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="split_on_landscape"
+        android:summary="@string/pref_description_split_on_landscape"
+        android:title="@string/pref_title_split_on_landscape" />
+
+    <net.margaritov.preference.colorpicker.ColorPickerPreference
+        android:defaultValue="@integer/COLOR_WHITE"
+        android:key="reader_bk_color"
+        android:summary="@string/summary_reader_bk_color"
+        android:title="@string/title_reader_bk_color" />
+
+    <com.foreignreader.pref.FontSizePreference
+        android:key="font_size"
+        android:summary="Font size"
+        android:title="This preference allows to select an text font size in reader" />
+
+    <!--
+         <ListPreference
+        android:defaultValue="serif"
+        android:key="font_family"
+        android:summary="This preference allows to select an text font family"
+        android:title="Font family" />
+    -->
+
+</PreferenceScreen>

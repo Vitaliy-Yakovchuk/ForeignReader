@@ -46,6 +46,7 @@ public class PageView extends View {
 	private TextWidthImpl textWidth;
 	private int lineHeight;
 	private String title;
+	private int bkColor = Color.WHITE;
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -57,6 +58,8 @@ public class PageView extends View {
 		gr[5] = Color.parseColor("#F0F0F0");
 	}
 
+	private Rect r = new Rect();
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		if (words == null) {
@@ -64,6 +67,10 @@ public class PageView extends View {
 				loadPage.run();
 			return;
 		}
+
+		textPaint.setColor(bkColor);
+		canvas.getClipBounds(r);
+		canvas.drawRect(r, textPaint);
 
 		if (splitPages) {
 			int c = getWidth() / 2;
@@ -80,9 +87,13 @@ public class PageView extends View {
 			Word word = words.get(i);
 			if (i >= startSelection && i <= endSelection) {
 				textPaint.setColor(selected);
-			} else
+				canvas.drawRect(word.rect, textPaint);
+			} else {
 				textPaint.setColor(word.color);
-			canvas.drawRect(word.rect, textPaint);
+				if (word.color != Color.WHITE)
+					canvas.drawRect(word.rect, textPaint);
+			}
+
 			textPaint.setColor(Color.BLACK);
 			canvas.drawText(word.text, word.start, word.length2, word.x,
 					word.y, textPaint);
@@ -436,4 +447,8 @@ public class PageView extends View {
 		this.words = words;
 	}
 
+	@Override
+	public void setBackgroundColor(int color) {
+		this.bkColor = color;
+	}
 }

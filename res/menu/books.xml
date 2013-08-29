@@ -18,6 +18,13 @@
         android:showAsAction="withText"
         android:title="@string/action_settings"/>
         
+           
+        <item
+        android:id="@+id/action_settings2"
+        android:orderInCategory="100"
+        android:showAsAction="withText"
+        android:title="@string/action_settings"/>
+        
         
 
 </menu>

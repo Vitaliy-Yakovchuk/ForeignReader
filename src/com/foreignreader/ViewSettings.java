@@ -9,7 +9,6 @@ import com.foreignreader.util.FontManager;
 import com.foreignreader.R;
 
 import android.os.Bundle;
-import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -28,9 +27,9 @@ public class ViewSettings extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_view_settings);
+		setContentView(R.layout.dialog_font_preference);
 
-		RadioGroup group = (RadioGroup) findViewById(R.id.fontChooserGroup);
+		RadioGroup group = (RadioGroup) findViewById(R.id.font_chooser_group);
 		SharedPreferences preferences = getSharedPreferences(VIEW_PREF, 0);
 
 		HashMap<String, String> fonts = FontManager.enumerateFonts();
@@ -38,8 +37,8 @@ public class ViewSettings extends Activity {
 
 		selectedFontPath = preferences.getString("font_family", "serif");
 
-		int id=0;
-		
+		int id = 0;
+
 		for (Entry<String, String> entry : fonts.entrySet()) {
 			fontPaths.add(entry.getKey());
 			RadioButton radioButton = new RadioButton(this);
@@ -64,11 +63,8 @@ public class ViewSettings extends Activity {
 		});
 
 		SeekBar sb = (SeekBar) findViewById(R.id.fontSizeBar);
-		sb.setProgress(preferences.getInt("font_size", 30)-10);
+		sb.setProgress(preferences.getInt("font_size", 30) - 10);
 
-		CheckBox splitPages = (CheckBox) findViewById(R.id.splitOnLandscapeCheckBox);
-		splitPages.setChecked(preferences
-				.getBoolean("split_on_landscape", true));
 	}
 
 	@Override
@@ -80,10 +76,7 @@ public class ViewSettings extends Activity {
 
 		editor.putString("font_family", selectedFontPath);
 		editor.putInt("font_size",
-				((SeekBar) findViewById(R.id.fontSizeBar)).getProgress()+10);
-		editor.putBoolean("split_on_landscape",
-				((CheckBox) findViewById(R.id.splitOnLandscapeCheckBox))
-						.isChecked());
+				((SeekBar) findViewById(R.id.fontSizeBar)).getProgress() + 10);
 
 		editor.commit();
 	}
