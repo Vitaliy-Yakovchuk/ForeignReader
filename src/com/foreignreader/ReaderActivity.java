@@ -123,7 +123,7 @@ public class ReaderActivity extends Activity {
 	private float downX;
 
 	private int background;
-	
+
 	private int foreground;
 
 	@Override
@@ -155,7 +155,7 @@ public class ReaderActivity extends Activity {
 		fontName = preferences.getString("font_family", "serif");
 
 		background = preferences.getInt("reader_bk_color", Color.WHITE);
-		
+
 		foreground = preferences.getInt("reader_fk_color", Color.BLACK);
 
 		sectionCacheHelper = new SectionCacheHelper(this);
@@ -237,7 +237,7 @@ public class ReaderActivity extends Activity {
 		contentView = (PageView) findViewById(R.id.fullscreen_content);
 
 		contentView.setBackgroundColor(background);
-		
+
 		contentView.setForegroundColor(foreground);
 
 		final View controlsView = findViewById(R.id.fullscreen_controls);
@@ -281,10 +281,14 @@ public class ReaderActivity extends Activity {
 
 					@Override
 					public void onClick(View v) {
-						seekPageBar.setProgress(section.getCurrentPage());
+						int currentPage = section.getCurrentPage();
+						seekPageBar.setProgress(currentPage);
 						seekPageBar.setMax(section.getPageCount() - 1);
-						pageNumber.setText(Integer.toString(section
-								.getCurrentPage() + 1));
+
+						if (splitPages)
+							currentPage *= 2;
+
+						pageNumber.setText(Integer.toString(currentPage + 1));
 						pageNumber.setVisibility(View.VISIBLE);
 						seekPageBar.setVisibility(View.VISIBLE);
 					}
