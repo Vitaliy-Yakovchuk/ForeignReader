@@ -67,8 +67,6 @@ public class PlainTextView extends RelativeLayout {
 
 	private float downY;
 
-	private View controlsView;
-
 	public PlainTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(context);
@@ -112,8 +110,6 @@ public class PlainTextView extends RelativeLayout {
 			}
 		});
 
-		controlsView = findViewById(R.id.fullscreen_controls);
-
 		sendButton = (Button) rootView.findViewById(R.id.sendButton);
 		sendButton.setOnClickListener(new View.OnClickListener() {
 
@@ -136,7 +132,7 @@ public class PlainTextView extends RelativeLayout {
 				tos.x = selectedText.x;
 				int[] location = new int[2];
 				contentView.getLocationOnScreen(location);
-				tos.y = Math.round(selectedText.y - location[0]);
+				tos.y = Math.round(selectedText.y + location[1]);
 				if (!TranslationHelper.translate(context, tos)) {
 					translateButton.setEnabled(false);
 				}
@@ -288,7 +284,7 @@ public class PlainTextView extends RelativeLayout {
 					lineWidth, false, 0, 0, "");
 			contentView.getLayoutParams().height = lineHeight
 					* sectionImpl.getPage().getMaxLine()
-					+ controlsView.getHeight();
+					+ fastTranslation.getHeight() + lineHeight;
 			rootView.requestLayout();
 		}
 	}
