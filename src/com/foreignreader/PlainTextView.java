@@ -1,5 +1,7 @@
 package com.foreignreader;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +26,8 @@ import android.widget.TextView;
 import com.foreignreader.textimpl.TextWidthImpl;
 import com.foreignreader.util.FastTranslator;
 import com.foreignreader.util.TranslationHelper;
+import com.reader.common.ObjectsFactory;
+import com.reader.common.Word;
 import com.reader.common.book.Section;
 import com.reader.common.impl.SectionImpl;
 
@@ -38,8 +42,6 @@ public class PlainTextView extends RelativeLayout {
 	private int fontSize;
 
 	private String fontName;
-
-	private int background;
 
 	private int lineHeight;
 
@@ -121,6 +123,18 @@ public class PlainTextView extends RelativeLayout {
 
 		fastTranslation = (TextView) findViewById(R.id.translationText);
 		fastTranslation.setBackgroundColor(Color.WHITE);
+		fastTranslation.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Word word = ObjectsFactory.getDefaultDatabase().getWordInfo(
+						TranslationHelper
+						.normilize(selectedText.text).toLowerCase(Locale.getDefault()));
+				if (word != null)
+					openWordInfo(word);
+			}
+		});
+
 
 		translateButton = (Button) rootView.findViewById(R.id.translateButton);
 		translateButton.setOnClickListener(new View.OnClickListener() {
@@ -145,13 +159,6 @@ public class PlainTextView extends RelativeLayout {
 		fontSize = preferences.getInt("font_size", 30);
 
 		fontName = preferences.getString("font_family", "serif");
-
-		background = preferences.getInt("reader_bk_color", Color.WHITE);
-
-		contentView.setBackgroundColor(background);
-
-		contentView.setForegroundColor(preferences.getInt("reader_fk_color",
-				Color.BLACK));
 
 		gestureScanner = new GestureDetector(context,
 				new GestureDetector.SimpleOnGestureListener() {
@@ -183,10 +190,17 @@ public class PlainTextView extends RelativeLayout {
 
 	}
 
+	protected void openWordInfo(Word word) {
+		Intent intent = new Intent(getContext().getApplicationContext(),
+				WordDetailActivity.class);
+		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(WordDetailFragment.ARG_ITEM_ID, word.getText());
+		getContext().getApplicationContext().startActivity(intent);
+	}
+
 	protected void markWord() {
 		contentView.markWord(selectedText.text);
 		contentView.clearSelection();
-		fastTranslation.setText("");
 		contentView.invalidate();
 	}
 

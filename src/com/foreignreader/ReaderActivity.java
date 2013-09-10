@@ -3,6 +3,7 @@ package com.foreignreader;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -37,6 +38,7 @@ import com.foreignreader.util.SystemUiHider;
 import com.foreignreader.util.TranslationHelper;
 import com.reader.common.BookMetadata;
 import com.reader.common.ObjectsFactory;
+import com.reader.common.Word;
 import com.reader.common.book.Book;
 import com.reader.common.book.BookLoader;
 import com.reader.common.book.SectionMetadata;
@@ -246,6 +248,17 @@ public class ReaderActivity extends Activity {
 		markWord = (Button) findViewById(R.id.markWordButton);
 		fastTranslation = (TextView) findViewById(R.id.translationText);
 		fastTranslation.setBackgroundColor(Color.WHITE);
+		fastTranslation.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Word word = ObjectsFactory.getDefaultDatabase().getWordInfo(
+						TranslationHelper.normilize(selectedText.text)
+								.toLowerCase(Locale.getDefault()));
+				if (word != null)
+					openWordInfo(word);
+			}
+		});
 		seekPageBar = (SeekBar) findViewById(R.id.seekPageBar);
 
 		seekPageBar
@@ -396,6 +409,12 @@ public class ReaderActivity extends Activity {
 
 	}
 
+	protected void openWordInfo(Word word) {
+		Intent intent = new Intent(getBaseContext(), WordDetailActivity.class);
+		intent.putExtra(WordDetailFragment.ARG_ITEM_ID, word.getText());
+		startActivity(intent);
+	}
+
 	protected void sendText() {
 		Intent sendIntent = new Intent();
 		sendIntent.setAction(Intent.ACTION_SEND);
@@ -431,7 +450,6 @@ public class ReaderActivity extends Activity {
 	protected void markWord() {
 		contentView.markWord(selectedText.text);
 		contentView.clearSelection();
-		fastTranslation.setText("");
 		contentView.invalidate();
 	}
 

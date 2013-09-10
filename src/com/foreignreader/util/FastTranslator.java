@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentNavigableMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
+import com.reader.common.ObjectsFactory;
+import com.reader.common.Word;
 
 import android.os.Environment;
 
@@ -22,26 +24,50 @@ public class FastTranslator {
 	}
 
 	public String getMeaning(String word) {
+		word = TranslationHelper
+				.normilize(word.toLowerCase(Locale.getDefault()));
+		String res = getMeaningA(word);
+		Word word2 = ObjectsFactory.getDefaultDatabase().getWordInfo(word);
+		String nw = word;
+		if (word2 != null)
+			nw = word2.getText() + " (" + word2.getInSentenceCount() + ")";
+		if (res == null)
+			return nw;
+		return res.replaceAll(word, nw);
+	}
+
+	public String getMeaningA(String word) {
 		if (!supported)
 			return null;
 		openIfNeed();
 		if (!supported)
 			return null;
-		String t = meanings.get(TranslationHelper.normilize(word
-				.toLowerCase(Locale.getDefault())));
+		String t = meanings.get(word);
 		if (t == null)
 			return null;
 		return TranslationHelper.normilizeA(t);
 	}
-	
+
 	public String getNotNornalizedMeaning(String word) {
+		word = TranslationHelper
+				.normilize(word.toLowerCase(Locale.getDefault()));
+		String res = getNotNornalizedMeaningA(word);
+		Word word2 = ObjectsFactory.getDefaultDatabase().getWordInfo(word);
+		String nw = word;
+		if (word2 != null)
+			nw = word2.getText() + " (" + word2.getInSentenceCount() + ")";
+		if (res == null)
+			return nw;
+		return res.replaceAll(word, nw);
+	}
+
+	public String getNotNornalizedMeaningA(String word) {
 		if (!supported)
 			return null;
 		openIfNeed();
 		if (!supported)
 			return null;
-		return meanings.get(TranslationHelper.normilize(word
-				.toLowerCase(Locale.getDefault())));		
+		return meanings.get(word);
 	}
 
 	public void openIfNeed() {
