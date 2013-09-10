@@ -1,23 +1,15 @@
 package com.foreignreader;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.SpannableStringBuilder;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.foreignreader.util.LongTranslationHelper;
-import com.foreignreader.util.TranslationHelper;
 import com.foreignreader.words.WordsContent;
-import com.foreignreader.R;
-import com.reader.common.ColorConstants;
-import com.reader.common.ObjectsFactory;
 import com.reader.common.Word;
+import com.reader.common.book.Section;
 
 /**
  * A fragment representing a single Word detail screen. This fragment is either
@@ -68,66 +60,14 @@ public class WordDetailFragment extends Fragment {
 		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
 
-			final TextView longTranslation = (TextView) rootView
+			final PlainTextView longTranslation = (PlainTextView) rootView
 					.findViewById(R.id.longTranslationText);
 
-			((Button) rootView.findViewById(R.id.markWordAsKnowButton))
-					.setOnClickListener(new View.OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							ObjectsFactory.createSimpleSource("").markColor(
-									mItem.getText(), ColorConstants.WHITE);
-							v.setEnabled(false);
-						}
-					});
-
-			longTranslation.setMovementMethod(new ScrollingMovementMethod());
-
-			SpannableStringBuilder builder = new SpannableStringBuilder();
+			Section builder = new Section();
 
 			longTranslationHelper.getTranslation(mItem.getText(), builder);
 
 			longTranslation.setText(builder);
-
-			final TextView textView = (TextView) rootView
-					.findViewById(R.id.word_detail);
-			textView.setText(mItem.getText());
-
-			((Button) rootView.findViewById(R.id.wordSendButton))
-					.setOnClickListener(new View.OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							Intent sendIntent = new Intent();
-							sendIntent.setAction(Intent.ACTION_SEND);
-							sendIntent
-									.putExtra(Intent.EXTRA_TEXT,
-											TranslationHelper.normilize(mItem
-													.getText()));
-							sendIntent.setType("text/plain");
-							startActivity(Intent.createChooser(sendIntent,
-									getResources().getText(R.string.send_to)));
-						}
-					});
-
-			((Button) rootView.findViewById(R.id.wordTranslateButton))
-					.setOnClickListener(new View.OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							TextOnScreen textOnScreen = new TextOnScreen();
-							textOnScreen.text = mItem.getText();
-							int location[] = new int[2];
-							textView.getLocationOnScreen(location);
-
-							textOnScreen.x = location[0];
-							textOnScreen.y = location[1] + textView.getHeight();
-
-							TranslationHelper.translate(rootView.getContext(),
-									textOnScreen);
-						}
-					});
 		}
 
 		return rootView;

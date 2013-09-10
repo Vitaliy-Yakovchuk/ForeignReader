@@ -4,52 +4,13 @@
     android:layout_height="match_parent"
     tools:context=".WordDetailFragment" >
 
-    <TextView
-        android:id="@+id/word_detail"
-        style="?android:attr/textAppearanceLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:padding="16dp"
-        android:textIsSelectable="true" />
-
-    <Button
-        android:id="@+id/wordSendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/wordTranslateButton"
-        android:layout_marginLeft="50dp"
-        android:layout_toRightOf="@+id/wordTranslateButton"
-        android:text="Send" />
-
-    <Button
-        android:id="@+id/wordTranslateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="Translate" />
-
-    <TextView
+    <com.foreignreader.PlainTextView
         android:id="@+id/longTranslationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/wordSendButton"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/word_detail"
-        android:ellipsize="none"
-        android:scrollHorizontally="false"
-        android:text=""
-        android:textSize="@dimen/dictional_font_size" />
-
-    <Button
-        android:id="@+id/markWordAsKnowButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="@string/mark_word_as_knows" />
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

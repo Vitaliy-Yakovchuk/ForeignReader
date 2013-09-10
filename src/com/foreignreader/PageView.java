@@ -47,6 +47,7 @@ public class PageView extends View {
 	private int lineHeight;
 	private String title;
 	private int bkColor = Color.WHITE;
+	private boolean paintBottom = true;
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -85,6 +86,10 @@ public class PageView extends View {
 
 		for (int i = words.size() - 1; i >= 0; --i) {
 			Word word = words.get(i);
+			if (word.rect.bottom < r.top)
+				continue;
+			if (word.rect.top > r.bottom)
+				continue;
 			if (i >= startSelection && i <= endSelection) {
 				textPaint.setColor(selected);
 				canvas.drawRect(word.rect, textPaint);
@@ -98,7 +103,8 @@ public class PageView extends View {
 			canvas.drawText(word.text, word.start, word.length2, word.x,
 					word.y, textPaint);
 		}
-
+		if (!paintBottom)
+			return;
 		if (splitPages) {
 			int dy = getHeight() - (int) (lineHeight * 0.3);
 			String pc = (currentPage * 2 - 1) + "/" + (pageCount * 2);
@@ -244,7 +250,10 @@ public class PageView extends View {
 				word.lcWord = textProperties.getText().toLowerCase(
 						Locale.getDefault());
 
-				word.color = toNativeColor(textProperties.getColor());
+				if (page.getIgnoreLineCount() >= line)
+					word.color = Color.WHITE;
+				else
+					word.color = toNativeColor(textProperties.getColor());
 			}
 
 			@Override
@@ -450,5 +459,13 @@ public class PageView extends View {
 	@Override
 	public void setBackgroundColor(int color) {
 		this.bkColor = color;
+	}
+
+	public void setPaintBottom(boolean paintBottom) {
+		this.paintBottom = paintBottom;
+	}
+
+	public boolean isPaintBottom() {
+		return paintBottom;
 	}
 }

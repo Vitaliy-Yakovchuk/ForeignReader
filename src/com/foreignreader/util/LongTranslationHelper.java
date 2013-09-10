@@ -2,9 +2,11 @@ package com.foreignreader.util;
 
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
+
+import android.os.Environment;
 
 import com.reader.common.ObjectsFactory;
+import com.reader.common.book.Section;
 import com.reader.common.book.Sentence;
 
 import edu.mit.jwi.Dictionary;
@@ -12,9 +14,6 @@ import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
-import android.os.Environment;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
 
 public class LongTranslationHelper {
 
@@ -28,7 +27,7 @@ public class LongTranslationHelper {
 		fastTranslator = new FastTranslator();
 	}
 
-	public void getTranslation(String text, SpannableStringBuilder builder) {
+	public void getTranslation(String text, Section builder) {
 		if (!supported)
 			return;
 		openIfNeed();
@@ -39,58 +38,36 @@ public class LongTranslationHelper {
 
 		String s = fastTranslator.getNotNornalizedMeaning(text);
 		if (s != null && s.length() > 0) {
-			builder.append(s);
-			builder.append('\n');
+			s.replace('\n', ' ');
+			builder.getParagraphs().add(s);
+			builder.setIgnoreParagraphCount(1);
 		}
 		add(dict.getIndexWord(text, POS.NOUN), "Noun\n", builder);
 		add(dict.getIndexWord(text, POS.VERB), "Verb\n", builder);
 		add(dict.getIndexWord(text, POS.ADJECTIVE), "Adjective\n", builder);
 		add(dict.getIndexWord(text, POS.ADVERB), "Adverb\n", builder);
-		builder.append('\n');
 
 		List<Sentence> sentences = ObjectsFactory.getDefaultDatabase()
 				.getSentences(text);
 		if (sentences != null) {
 			for (Sentence sentence : sentences) {
-				int off = builder.length();
 				String text2 = sentence.text;
 				while (text2.startsWith("\""))
 					text2 = text2.substring(1);
 
-				builder.append(text2);
-				builder.append('\n');
-				builder.append('\n');
-
-				String lowerCase = text2.toLowerCase(Locale.getDefault());
-				String w = text.toLowerCase(Locale.getDefault());
-				int index = 0;
-				do {
-					index = lowerCase.indexOf(w, index);
-					if (index < 0)
-						break;
-					builder.setSpan(new StyleSpan(
-							android.graphics.Typeface.BOLD), off + index, off
-							+ index + w.length(), 0);
-					index += w.length();
-				} while (true);
-
+				builder.getParagraphs().add(text2);
 			}
 		}
 	}
 
-	private void add(IIndexWord idxWord, String section,
-			SpannableStringBuilder builder) {
+	private void add(IIndexWord idxWord, String section, Section builder) {
 		if (idxWord != null) {
-			int s = builder.length();
-			builder.append(section);
-			builder.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), s,
-					builder.length(), 0);
-			builder.append('\n');
+			builder.getParagraphs().add(section);
 			List<IWordID> wordIDs = idxWord.getWordIDs();
 			int number = 1;
 			for (IWordID wordID : wordIDs) {
-				s = builder.length();
-				builder.append(number + ". ");
+				StringBuffer s = new StringBuffer();
+				s.append(number + ". ");
 
 				IWord word = dict.getWord(wordID);
 				List<IWord> words = word.getSynset().getWords();
@@ -100,16 +77,13 @@ public class LongTranslationHelper {
 						if (first)
 							first = false;
 						else
-							builder.append("; ");
-						builder.append(word2.getLemma());
+							s.append("; ");
+						s.append(word2.getLemma());
 					}
 				}
-				builder.append('\n');
+				builder.getParagraphs().add(s.toString());
 
-				builder.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-						s, builder.length(), 0);
-				builder.append(word.getSynset().getGloss());
-				builder.append('\n');
+				builder.getParagraphs().add(word.getSynset().getGloss());
 				List<IWordID> related = word.getRelatedWords();
 				boolean hasR = false;
 
@@ -120,8 +94,8 @@ public class LongTranslationHelper {
 					}
 
 				if (hasR) {
-					s = builder.length();
-					builder.append("Related: ");
+					s.setLength(0);
+					s.append("Related: ");
 
 					first = true;
 
@@ -130,9 +104,10 @@ public class LongTranslationHelper {
 							if (first)
 								first = false;
 							else
-								builder.append("; ");
-							builder.append(r.getLemma());
+								s.append("; ");
+							s.append(r.getLemma());
 						}
+					builder.getParagraphs().add(s.toString());
 				}
 				number++;
 			}
