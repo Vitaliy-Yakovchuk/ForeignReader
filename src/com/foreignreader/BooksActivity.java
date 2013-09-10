@@ -36,15 +36,13 @@ public class BooksActivity extends Activity {
 
 	private static final int REQUEST_OPEN_WORDS = 1;
 
-	private static final int REQUEST_OPEN_VIEW_SETTING = 2;
-	
-	private static final int REQUEST_OPEN_SETTING = 3;
+	private static final int REQUEST_OPEN_SETTING = 2;
 
 	private BookFileAdapter adapter;
 
 	private List<BookMetadata> bookFiles;
 
-	public final static boolean TESTING_STORGE = true;// false;
+	public final static boolean TESTING_STORGE = false;// false;
 
 	private BooksDatabase booksDatabase;
 
@@ -117,11 +115,6 @@ public class BooksActivity extends Activity {
 
 	}
 
-	protected void openViewSettingActivity() {
-		Intent intent = new Intent(getBaseContext(), ViewSettings.class);
-		startActivityForResult(intent, REQUEST_OPEN_VIEW_SETTING);
-	}
-	
 	protected void openSettingActivity() {
 		Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
 		startActivityForResult(intent, REQUEST_OPEN_SETTING);
@@ -203,9 +196,6 @@ public class BooksActivity extends Activity {
 			pickFile(null);
 			return true;
 		case R.id.action_settings:
-			openViewSettingActivity();
-			return true;
-		case R.id.action_settings2:
 			openSettingActivity();
 			return true;
 		case R.id.known_words:

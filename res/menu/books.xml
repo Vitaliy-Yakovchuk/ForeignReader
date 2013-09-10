@@ -5,26 +5,15 @@
         android:orderInCategory="100"
         android:showAsAction="withText"
         android:title="@string/add_file"/>
-    
     <item
         android:id="@+id/known_words"
         android:orderInCategory="100"
         android:showAsAction="withText"
         android:title="@string/known_words"/>
-        
-        <item
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="withText"
         android:title="@string/action_settings"/>
-        
-           
-        <item
-        android:id="@+id/action_settings2"
-        android:orderInCategory="100"
-        android:showAsAction="withText"
-        android:title="@string/action_settings"/>
-        
-        
 
 </menu>

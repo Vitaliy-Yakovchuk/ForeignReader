@@ -11,18 +11,15 @@
         android:key="reader_bk_color"
         android:summary="@string/summary_reader_bk_color"
         android:title="@string/title_reader_bk_color" />
+    <net.margaritov.preference.colorpicker.ColorPickerPreference
+        android:defaultValue="@integer/COLOR_BLACK"
+        android:key="reader_fk_color"
+        android:summary="@string/summary_reader_fk_color"
+        android:title="@string/title_reader_fk_color" />
 
     <com.foreignreader.pref.FontSizePreference
         android:key="font_size"
-        android:summary="Font size"
-        android:title="This preference allows to select an text font size in reader" />
-
-    <!--
-         <ListPreference
-        android:defaultValue="serif"
-        android:key="font_family"
-        android:summary="This preference allows to select an text font family"
-        android:title="Font family" />
-    -->
+        android:summary="This preference allows to select an text font size and family in reader"
+        android:title="Font" />
 
 </PreferenceScreen>

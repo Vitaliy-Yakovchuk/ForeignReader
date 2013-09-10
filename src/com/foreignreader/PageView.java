@@ -48,6 +48,7 @@ public class PageView extends View {
 	private String title;
 	private int bkColor = Color.WHITE;
 	private boolean paintBottom = true;
+	private int fkColor = Color.BLACK;
 
 	public PageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -99,7 +100,7 @@ public class PageView extends View {
 					canvas.drawRect(word.rect, textPaint);
 			}
 
-			textPaint.setColor(Color.BLACK);
+			textPaint.setColor(fkColor);
 			canvas.drawText(word.text, word.start, word.length2, word.x,
 					word.y, textPaint);
 		}
@@ -467,5 +468,9 @@ public class PageView extends View {
 
 	public boolean isPaintBottom() {
 		return paintBottom;
+	}
+
+	public void setForegroundColor(int foreground) {
+		this.fkColor = foreground;
 	}
 }

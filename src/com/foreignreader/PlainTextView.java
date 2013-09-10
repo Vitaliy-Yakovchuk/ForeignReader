@@ -154,6 +154,9 @@ public class PlainTextView extends RelativeLayout {
 
 		contentView.setBackgroundColor(background);
 
+		contentView.setForegroundColor(preferences.getInt("reader_fk_color",
+				Color.BLACK));
+
 		gestureScanner = new GestureDetector(context,
 				new GestureDetector.SimpleOnGestureListener() {
 					@Override

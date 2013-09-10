@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="17dp"
-                android:layout_toLeftOf="@+id/markWordButton"
+                android:layout_toLeftOf="@+id/markAllAsKnown"
                 android:text="Page"
                 android:textColor="#000000" />
 
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_toLeftOf="@+id/markWordButton"
                 android:text="@string/know_all_ather_words"
                 android:textColor="#000000" />
 
@@ -114,10 +114,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/markAllAsKnown"
+                android:layout_alignParentRight="true"
                 android:text="@string/change_word_status"
                 android:textColor="#000000" />
-
         </RelativeLayout>
     </FrameLayout>
 

@@ -10,8 +10,7 @@
         android:layout_alignBottom="@+id/removeBookButton"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/scanBookButton"
-        android:layout_toRightOf="@+id/openBookButton"
-        android:text="TextView" />
+        android:layout_toRightOf="@+id/openBookButton" />
 
     <Button
         android:id="@+id/removeBookButton"
