@@ -39,7 +39,7 @@ public class WordListActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		if (BooksActivity.TESTING_STORGE)
 			ObjectsFactory.storageFile = new File(getFilesDir(), "words.db");
 		else {
@@ -50,11 +50,9 @@ public class WordListActivity extends FragmentActivity implements
 			ObjectsFactory.storageFile = new File(file, "words.db");
 		}
 
-		
 		setContentView(R.layout.activity_word_list);
 
-		TextView stat = (TextView) findViewById(R.id.statisticTextView);
-
+		
 		if (BooksActivity.TESTING_STORGE)
 			ObjectsFactory.storageFile = new File(getFilesDir(), "words.db");
 		else {
@@ -67,14 +65,15 @@ public class WordListActivity extends FragmentActivity implements
 
 		int[] n = ObjectsFactory.getDefaultDatabase().getWordsCount();
 
-		stat.setText("Known words: " + n[0] + "   Unknown words: " + n[1]);
-
 		if (findViewById(R.id.word_detail_container) != null) {
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
 			// res/values-sw600dp). If this view is present, then the
 			// activity should be in two-pane mode.
 			mTwoPane = true;
+
+			TextView stat = (TextView) findViewById(R.id.statisticTextView);
+			stat.setText("Known words: " + n[0] + "   Unknown words: " + n[1]);
 
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.

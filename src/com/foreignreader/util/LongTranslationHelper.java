@@ -28,24 +28,20 @@ public class LongTranslationHelper {
 	}
 
 	public void getTranslation(String text, Section builder) {
-		if (!supported)
-			return;
-		openIfNeed();
-		if (!supported)
-			return;
-
 		text = TranslationHelper.normilize(text);
-
-		String s = fastTranslator.getNotNornalizedMeaning(text);
-		if (s != null && s.length() > 0) {
-			s.replace('\n', ' ');
-			builder.getParagraphs().add(s);
-			builder.setIgnoreParagraphCount(1);
+		openIfNeed();
+		if (supported) {
+			String s = fastTranslator.getNotNornalizedMeaning(text);
+			if (s != null && s.length() > 0) {
+				s.replace('\n', ' ');
+				builder.getParagraphs().add(s);
+				builder.setIgnoreParagraphCount(1);
+			}
+			add(dict.getIndexWord(text, POS.NOUN), "Noun\n", builder);
+			add(dict.getIndexWord(text, POS.VERB), "Verb\n", builder);
+			add(dict.getIndexWord(text, POS.ADJECTIVE), "Adjective\n", builder);
+			add(dict.getIndexWord(text, POS.ADVERB), "Adverb\n", builder);
 		}
-		add(dict.getIndexWord(text, POS.NOUN), "Noun\n", builder);
-		add(dict.getIndexWord(text, POS.VERB), "Verb\n", builder);
-		add(dict.getIndexWord(text, POS.ADJECTIVE), "Adjective\n", builder);
-		add(dict.getIndexWord(text, POS.ADVERB), "Adverb\n", builder);
 
 		List<Sentence> sentences = ObjectsFactory.getDefaultDatabase()
 				.getSentences(text);
