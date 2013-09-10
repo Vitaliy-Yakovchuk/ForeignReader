@@ -128,13 +128,12 @@ public class PlainTextView extends RelativeLayout {
 			@Override
 			public void onClick(View v) {
 				Word word = ObjectsFactory.getDefaultDatabase().getWordInfo(
-						TranslationHelper
-						.normilize(selectedText.text).toLowerCase(Locale.getDefault()));
+						TranslationHelper.normilize(selectedText.text)
+								.toLowerCase(Locale.getDefault()));
 				if (word != null)
 					openWordInfo(word);
 			}
 		});
-
 
 		translateButton = (Button) rootView.findViewById(R.id.translateButton);
 		translateButton.setOnClickListener(new View.OnClickListener() {
@@ -287,7 +286,7 @@ public class PlainTextView extends RelativeLayout {
 
 		lineHeight = dipToPixels(fontSize) + 3;
 
-		lineWidth = contentView.getWidth();
+		lineWidth = (int) (contentView.getWidth() * 0.98);
 
 		textWidth = new TextWidthImpl(paint);
 
