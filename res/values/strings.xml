@@ -45,5 +45,7 @@
     <string name="action_download_word_net">Download WordNet dictionary</string>
     <string name="word_net_download_uri">http://wordnetcode.princeton.edu/wn3.1.dict.tar.gz</string>
     <string name="word_net_downloaded">WordNet downloaded</string>
-
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="action_about">About</string>
+    
 </resources>

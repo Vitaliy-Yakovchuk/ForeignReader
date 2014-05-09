@@ -24,4 +24,16 @@
     -->
     <item name="activity_word_list" type="layout">@layout/activity_word_twopane</item>
 
+    <string name="about_text">        &lt;p&gt;Copyright 2014 Vitaliy Yakovchuk&lt;/p&gt;
+  
+  &lt;p&gt;Licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)&lt;/p&gt;
+        &lt;p&gt;Fb2 Reader that helps to study foreign languages. I made it for myself and for few my friends. All my source code is published on github with Apache 2.0 License.&lt;/p&gt;&lt;p&gt;The source code of this project can be found in two repositories:
+&lt;p&gt;Android specific source code: https://github.com/Vitaliy-Yakovchuk/ForeignReader&lt;/p&gt;
+&lt;p&gt;Core source code https://github.com/Vitaliy-Yakovchuk/foreign-reader-libs&lt;/p&gt;&lt;p&gt;This project uses other open source projects:
+&lt;p&gt;MapDB - fast, simple yep powerful key-value database (Apache 2.0 License) http://www.mapdb.org/&lt;/p&gt;
+&lt;p&gt;JWI - the MIT Java Wordnet Interface (MIT License) http://projects.csail.mit.edu/jwi/&lt;/p&gt;
+&lt;p&gt;Jericho HTML Parse universalchardet, that is the encoding detector library of Mozilla. It is using detect correct encoding for txt files. (Mozilla Public License 1.1) https://code.google.com/p/juniversalchardet/&lt;/p&gt;
+&lt;p&gt;Apache Commons Compress is a library defines an API for working with archives (currently using just to download and unpack WordNet database archive) (Apache 2.0 License)&lt;/p&gt;
+The application can additionally download WordNet - a large lexical database of English (WordNet 3.0 license:) http://wordnet.princeton.edu/&lt;/p&gt;</string>
+
 </resources>

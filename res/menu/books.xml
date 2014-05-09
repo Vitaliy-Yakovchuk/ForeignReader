@@ -36,5 +36,11 @@
         android:orderInCategory="100"
         android:showAsAction="withText"
         android:title="@string/action_download_word_net"/>
+    
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:showAsAction="withText"
+        android:title="@string/action_about"/>
 
 </menu>

@@ -198,6 +198,11 @@ public class BooksActivity extends Activity {
 
 	}
 
+	protected void openAboutActivity() {
+		Intent intent = new Intent(getBaseContext(), AboutActivity.class);
+		startActivityForResult(intent, REQUEST_OPEN_SETTING);
+	}
+	
 	protected void openSettingActivity() {
 		Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
 		startActivityForResult(intent, REQUEST_OPEN_SETTING);
@@ -300,6 +305,9 @@ public class BooksActivity extends Activity {
 			return true;
 		case R.id.action_download_word_net:
 			downloadWordNet();
+			return true;
+		case R.id.action_about:
+			openAboutActivity();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
