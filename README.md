@@ -1,4 +1,4 @@
 ForignReader
 ============
 
-Android fb2 reader that helps to study forign language
+Android fb2 reader that helps to study foreign language
