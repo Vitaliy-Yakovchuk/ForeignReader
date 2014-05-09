@@ -30,13 +30,20 @@ import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
 
+/**
+ * WordNet helper
+ * 
+ * @author Vitaliy Yakovchuk
+ * 
+ */
+
 public class LongTranslationHelper {
 
 	private FastTranslator fastTranslator;
 
 	private Dictionary dict;
 
-	private static boolean supported = true;
+	private boolean supported;
 
 	public LongTranslationHelper() {
 		fastTranslator = new FastTranslator();
@@ -127,12 +134,9 @@ public class LongTranslationHelper {
 	}
 
 	public void openIfNeed() {
+		supported = true;
 		if (dict == null) {
-			File file = new File(Environment.getExternalStoragePublicDirectory(
-					Environment.DIRECTORY_PICTURES).getParentFile(),
-					"Foreign Reader");
-			file = new File(file, "WordNet");
-			file = new File(file, "dict");
+			File file = getWordNetDict();
 			if (!file.exists()) {
 				supported = false;
 				return;
@@ -145,6 +149,16 @@ public class LongTranslationHelper {
 				return;
 			}
 		}
+	}
+
+	public static File getWordNetDict() {
+		// TODO maybe not a best idea to get "Foreign Reader" folder
+		File file = new File(Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES).getParentFile(),
+				"Foreign Reader");
+		file = new File(file, "WordNet");
+		file = new File(file, "dict");
+		return file;
 	}
 
 	public void close() {

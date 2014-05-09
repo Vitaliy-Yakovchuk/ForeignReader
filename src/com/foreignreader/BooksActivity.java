@@ -16,6 +16,7 @@
 package com.foreignreader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,7 +24,15 @@ import java.util.logging.Logger;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.app.DownloadManager.Query;
+import android.app.DownloadManager.Request;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -32,8 +41,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.foreignreader.R;
+import com.foreignreader.util.LongTranslationHelper;
+import com.foreignreader.util.WordNetExtractor;
 import com.lamerman.FileDialog;
 import com.lamerman.SelectionMode;
 import com.reader.common.BookMetadata;
@@ -60,6 +72,10 @@ public class BooksActivity extends Activity {
 	public final static boolean TESTING_STORGE = false;// false;
 
 	private BooksDatabase booksDatabase;
+
+	private long enqueue;
+
+	private DownloadManager dm;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +109,58 @@ public class BooksActivity extends Activity {
 
 		adapter = new BookFileAdapter(this, R.layout.book_item, bookFiles);
 		books.setAdapter(adapter);
+
+		// WordNet download section
+		BroadcastReceiver receiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				String action = intent.getAction();
+				if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+					Query query = new Query();
+					query.setFilterById(enqueue);
+					Cursor c = dm.query(query);
+					if (c.moveToFirst()) {
+						int columnIndex = c
+								.getColumnIndex(DownloadManager.COLUMN_STATUS);
+						if (DownloadManager.STATUS_SUCCESSFUL == c
+								.getInt(columnIndex)) {
+
+							String uriString = c
+									.getString(c
+											.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+
+							try {
+								final Uri uri = Uri.parse(uriString);
+
+								WordNetExtractor extractor = new WordNetExtractor() {
+
+									protected void onPostExecute(Void result) {
+										getContentResolver().delete(uri, null,
+												null);
+										Toast.makeText(
+												getApplicationContext(),
+												getResources()
+														.getString(
+																R.string.word_net_downloaded),
+												Toast.LENGTH_SHORT).show();
+										return;
+
+									};
+								};
+								extractor.execute(getContentResolver()
+										.openInputStream(uri));
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							}
+
+						}
+					}
+				}
+			}
+		};
+
+		registerReceiver(receiver, new IntentFilter(
+				DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 	}
 
 	public void removeBook(View view) {
@@ -146,6 +214,20 @@ public class BooksActivity extends Activity {
 		intent.putExtra(ReaderActivity.FILE, filebook.getFileName());
 
 		startActivity(intent);
+	}
+
+	private void downloadWordNet() {
+		if (LongTranslationHelper.getWordNetDict().exists()) {
+			Toast.makeText(getApplicationContext(),
+					getResources().getString(R.string.word_net_downloaded),
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+		Request request = new Request(Uri.parse(getResources().getString(
+				R.string.word_net_download_uri)));
+		enqueue = dm.enqueue(request);
+
 	}
 
 	private void pickFile(File aFile) {
@@ -215,6 +297,9 @@ public class BooksActivity extends Activity {
 			return true;
 		case R.id.known_words:
 			openWordsActivity();
+			return true;
+		case R.id.action_download_word_net:
+			downloadWordNet();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

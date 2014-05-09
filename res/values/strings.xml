@@ -27,11 +27,9 @@
     <string name="cancel">Cancel</string>
     <string name="create">Save</string>
     <string name="no_data">No Data</string>
-
     <string name="dialog_color_picker">Color Picker</string>
-    <string name="press_color_to_apply">Press on Color to apply</string>    
+    <string name="press_color_to_apply">Press on Color to apply</string>
 
-	
     <color name="gray">#ffff0000</color>
 
     <string name="err">Error</string>
@@ -44,5 +42,8 @@
     <string name="mark_word_as_knows">Mark this word as known</string>
     <string name="change_word_status">!</string>
     <string name="know_all_ather_words">OK</string>
+    <string name="action_download_word_net">Download WordNet dictionary</string>
+    <string name="word_net_download_uri">http://wordnetcode.princeton.edu/wn3.1.dict.tar.gz</string>
+    <string name="word_net_downloaded">WordNet downloaded</string>
 
 </resources>
